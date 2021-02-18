@@ -23,6 +23,9 @@
   },
   "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme",
   "devDependencies": {
+    "@commitlint/cli": "11.0.0",
+    "@commitlint/config-conventional": "11.0.0",
+    "@commitlint/prompt-cli": "11.0.0",
     "husky": "5.0.9"
   }
 }
