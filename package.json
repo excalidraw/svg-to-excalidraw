@@ -1,0 +1,24 @@
+{
+  "name": "svg-to-excalidraw",
+  "version": "0.0.0",
+  "description": "Convert SVG to Excalidraw’s file format",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/excalidraw/svg-to-excalidraw.git"
+  },
+  "keywords": [
+    "excalidraw",
+    "svg",
+    "svg-to-excalidraw"
+  ],
+  "author": "Nicolas Goudry <goudry.nicolas@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/excalidraw/svg-to-excalidraw.git/issues"
+  },
+  "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme"
+}
