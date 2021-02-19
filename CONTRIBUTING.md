@@ -7,6 +7,7 @@ The following is a set of guidelines for contributing to `svg-to-excalidraw`. Th
 ## Table of contents
 
 - [Code of Conduct][code-of-conduct]
+- [I just have a question][question]
 - [How can I contribute?][how-can-i-contribute]
   - [Reporting bugs][reporting-bugs]
   - [Suggesting enhancements][suggesting-enhancements]
@@ -15,6 +16,12 @@ The following is a set of guidelines for contributing to `svg-to-excalidraw`. Th
 - [Styleguides][styleguides]
   - [Git commit message][git-commit-message]
   - [JavaScript styleguide][js-styleguide]
+
+## I just have a question
+
+If the Readme file wasn't enough to answer your question, feel free to join the [Slack community][slack].
+
+**But, please, don't file an issue to ask a question.**
 
 ## How can I contribute?
 
@@ -92,6 +99,7 @@ All JavaScript code is linted with [standard code style][standard] through [esli
 
 [code-of-conduct]: https://github.com/excalidraw/svg-to-excalidraw/blob/main/CODE_OF_CONDUCT.md
 [question]: #i-just-have-a-question
+[slack]: https://join.slack.com/t/svg-to-excalidraw/shared_invite/zt-mn12i36r-kSvlGK7LAfY9FlK9Tbh3LQ
 [how-can-i-contribute]: #how-can-i-contribute
 [reporting-bugs]: #reporting-bugs
 [suggesting-enhancements]: #suggesting-enhancements
