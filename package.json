@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/excalidraw/svg-to-excalidraw.git/issues"
   },
-  "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme"
+  "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme",
+  "devDependencies": {
+    "husky": "5.0.9"
+  }
 }
