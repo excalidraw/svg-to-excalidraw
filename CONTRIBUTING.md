@@ -19,7 +19,7 @@ The following is a set of guidelines for contributing to `svg-to-excalidraw`. Th
 
 ## I just have a question
 
-If the Readme file wasn't enough to answer your question, feel free to join the [Slack community][slack].
+If the Readme file wasn't enough to answer your question, feel free to join the [Excalidraw's Discord][discord] (ping Nicolas Goudry or BROCHINGTON there).
 
 **But, please, don't file an issue to ask a question.**
 
@@ -99,7 +99,7 @@ All JavaScript code is linted with [standard code style][standard] through [esli
 
 [code-of-conduct]: https://github.com/excalidraw/svg-to-excalidraw/blob/main/CODE_OF_CONDUCT.md
 [question]: #i-just-have-a-question
-[slack]: https://join.slack.com/t/svg-to-excalidraw/shared_invite/zt-mn12i36r-kSvlGK7LAfY9FlK9Tbh3LQ
+[discord]: https://discord.gg/UexuTaE
 [how-can-i-contribute]: #how-can-i-contribute
 [reporting-bugs]: #reporting-bugs
 [suggesting-enhancements]: #suggesting-enhancements
