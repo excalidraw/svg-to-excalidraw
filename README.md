@@ -50,3 +50,22 @@ This project uses [SemVer][semver] for versioning. For the versions available, s
 [versioning]: #1234-versioning
 [semver]: http://semver.org
 [repotags]: https://github.com/excalidraw/svg-to-excalidraw/tags
+
+### :building_construction: Local Development
+
+#### Building the Project
+
+```bash
+npm run build # builds the project
+# or
+npm run build:watch # builds project whenever a file is updated.
+```
+
+#### Running dev pages locally
+
+There are a number of pages that exist in the `dev` folder that help in local development. These files need to be served, but a local dev serve is provided via the [serve library](https://github.com/vercel/serve).
+
+```bash
+npm run dev:serve
+# open up a browser page to localhost:5000/dev
+```
