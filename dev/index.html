@@ -41,8 +41,9 @@
       cols="80"
       placeholder="Result in excalidraw file format should be output here"
     ></textarea>
-    <script src="./parser.js"></script>
-    <script>
+    <script type="module">
+      import svgParse from "../dist/esm-bundle.js";
+
       const fileSelector = document.getElementById("source");
 
       fileSelector.addEventListener("change", (event) => {
@@ -61,7 +62,9 @@
 
         reader.readAsText(file);
         reader.addEventListener("load", (event) => {
-          window.svgParse(event.target.result);
+          const nl = svgParse.parse(event.target.result);
+
+          console.log("nodelist: ", nl);
 
           document.getElementById("result").value =
             "See console output (verbose level)";

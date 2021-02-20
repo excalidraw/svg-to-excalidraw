@@ -66,6 +66,7 @@ export function getNodeListFromDOM(dom: XMLDocument): Element[] {
  */
 export function parse(input: string): Element[] {
   const svgDOM = getDOMFromString(input);
+
   const nodeList = getNodeListFromDOM(svgDOM);
 
   console.debug("Fetched nodes:", nodeList);

@@ -1,1 +1,3 @@
-console.log("svg-to-excalidraw");
+import * as parser from "./parser";
+
+export default parser;
