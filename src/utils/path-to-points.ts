@@ -122,6 +122,8 @@ export default function pathToPoints(path: string): number[][][] {
         console.error("Unsupported command provided will be ignored:", command);
       }
     }
+
+    return elements;
   }
 
   throw new Error("No commands found in given path");
