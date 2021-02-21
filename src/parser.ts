@@ -1,9 +1,7 @@
 const SUPPORTED_TAGS = ["svg", "path"];
 
 /**
- * Get a DOM representation of a SVG file
- * @param {String} svgString SVG content to parse
- * @returns {XMLDocument}
+ * Get a DOM representation of a SVG file content
  * @todo Handle parsing errors
  * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
  */
@@ -18,8 +16,6 @@ export function getDOMFromString(svgString: string): XMLDocument {
 
 /**
  * Validate a node given by TreeWalker iteration algorithm
- * @param {Element} el Node to check
- * @returns {number} bit mask (unsigned short)
  * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
  */
 export function nodeValidator(el: Element): number {
@@ -34,11 +30,6 @@ export function nodeValidator(el: Element): number {
   return NodeFilter.FILTER_REJECT;
 }
 
-/**
- * Get node list from a DOM
- * @param {XMLDocument} dom DOM representation
- * @returns {NodeList}
- */
 export function getNodeListFromDOM(dom: XMLDocument): Element[] {
   const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
     acceptNode: nodeValidator,
@@ -61,8 +52,6 @@ export function getNodeListFromDOM(dom: XMLDocument): Element[] {
 
 /**
  * Parse a SVG file content
- * @param {String} input SVG content to parse
- * @returns {NodeList}
  */
 export function parse(input: string): Element[] {
   const svgDOM = getDOMFromString(input);
