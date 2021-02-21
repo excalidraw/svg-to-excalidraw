@@ -12,11 +12,6 @@
     "baseUrl": ".",
     "paths": {}
   },
-  "include": [
-    "src",
-    "svg-to-excalidraw.d.ts"
-  ],
-  "exclude": [
-    "src/test"
-  ]
+  "include": ["src", "svg-to-excalidraw.d.ts"],
+  "exclude": ["src/test"]
 }

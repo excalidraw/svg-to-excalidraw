@@ -31,8 +31,8 @@ This section guides you through submitting a bug report. Following these guideli
 
 Before creating bug reports, please check this list as you might find out that you don't need to create one:
 
-* Most importantly, check if you're using the latest version of `svg-to-excalidraw`.
-* **Search for an already existing bug report in [issues][issues]**. If it already exists **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
+- Most importantly, check if you're using the latest version of `svg-to-excalidraw`.
+- **Search for an already existing bug report in [issues][issues]**. If it already exists **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 When you are creating a bug report, please include as many details as possible. Fill in [the template][bug-report-template], the information it asks for helps us resolve issues faster.
 
@@ -44,8 +44,8 @@ This section guides you through submitting an enhancement suggestion, including 
 
 Before creating enhancement suggestions, please check this list as you might find out that you don't need to create one:
 
-* **Check the [Readme file][readme]**. You might discover that the enhancement is already available. Most importantly, check if you're using the latest version of `svg-to-excalidraw`.
-* **Search for an already existing feature request in [issues][issues]**. If it already exists **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
+- **Check the [Readme file][readme]**. You might discover that the enhancement is already available. Most importantly, check if you're using the latest version of `svg-to-excalidraw`.
+- **Search for an already existing feature request in [issues][issues]**. If it already exists **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 When you are creating an enhancement suggestion, please include as many details as possible. Fill in [the template][feature-request-template], including the steps that you imagine you would take if the feature you're requesting existed.
 
@@ -53,8 +53,8 @@ When you are creating an enhancement suggestion, please include as many details 
 
 Unsure where to begin contributing? You can start by looking through these `beginner` and `help-wanted` issues:
 
-* [Beginner issues][beginner] - issues which should only require a few lines of code, and a test or two.
-* [Help wanted issues][help-wanted] - issues which should be a bit more involved than `beginner` issues.
+- [Beginner issues][beginner] - issues which should only require a few lines of code, and a test or two.
+- [Help wanted issues][help-wanted] - issues which should be a bit more involved than `beginner` issues.
 
 Both issue lists are sorted by total number of comments. While not perfect, number of comments is a reasonable proxy for impact a given change will have.
 
@@ -88,14 +88,14 @@ npm run commit
 
 All JavaScript code is linted with [standard code style][standard] through [eslint][eslint].
 
-* Make sure your code is compatible with at least Node.js 8
-* Place requires in the following order:
-    * Built in Node Modules (such as `path`)
-    * Local Modules (using relative paths)
-* Place class properties in the following order:
-    * Class methods and properties (methods starting with `static`)
-    * Instance methods and properties
-* Avoid platform-dependent code
+- Make sure your code is compatible with at least Node.js 8
+- Place requires in the following order:
+  - Built in Node Modules (such as `path`)
+  - Local Modules (using relative paths)
+- Place class properties in the following order:
+  - Class methods and properties (methods starting with `static`)
+  - Instance methods and properties
+- Avoid platform-dependent code
 
 [code-of-conduct]: https://github.com/excalidraw/svg-to-excalidraw/blob/main/CODE_OF_CONDUCT.md
 [question]: #i-just-have-a-question

@@ -56,7 +56,7 @@ const umdConfig = {
     publicPath: '/static/',
     umdNamedDefine: true,
   },
-}
+};
 
 const esmConfig = {
   ...baseConfig,

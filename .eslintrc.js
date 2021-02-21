@@ -14,6 +14,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'prettier/@typescript-eslint',
   ],
   rules: {
     'comma-dangle': [2, 'always-multiline'],
@@ -72,11 +74,11 @@ module.exports = {
     'brace-style': [2, '1tbs', { allowSingleLine: true }],
     '@typescript-eslint/ban-ts-comment': 0,
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["webpack.config.js"],
-      "rules": {
-        "@typescript-eslint/no-var-requires": 0,
+      files: ['webpack.config.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 0,
       },
     },
   ],

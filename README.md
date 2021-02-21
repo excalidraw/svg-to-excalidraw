@@ -34,7 +34,7 @@ See [CONTRIBUTING.md][contribute].
 
 ## :1234: Versioning
 
-This project uses [SemVer][semver] for versioning. For the versions available, see the [tags on this repository][repotags]. 
+This project uses [SemVer][semver] for versioning. For the versions available, see the [tags on this repository][repotags].
 
 [npmshield]: https://img.shields.io/npm/v/svg-to-excalidraw.svg
 [npmpackage]: https://www.npmjs.com/package/svg-to-excalidraw
