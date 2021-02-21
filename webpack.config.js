@@ -14,16 +14,16 @@ const babelLoaderConfig = {
   },
 };
 
-module.exports = {
+const baseConfig = {
   entry: [path.join(process.cwd(), 'src/index.ts')],
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(process.cwd(), 'dist'),
-    library: 'svg-to-excalidraw',
-    libraryTarget: 'umd',
-    publicPath: '/static/',
-    umdNamedDefine: true,
-  },
+  // output: {
+  //   filename: 'bundle.js',
+  //   path: path.resolve(process.cwd(), 'dist'),
+  //   library: 'svg-to-excalidraw',
+  //   libraryTarget: 'umd',
+  //   publicPath: '/static/',
+  //   umdNamedDefine: true,
+  // },
   mode: 'production',
   devtool: 'eval-source-map',
   resolve: {
@@ -46,3 +46,31 @@ module.exports = {
   },
 };
 
+const umdConfig = {
+  ...baseConfig,
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(process.cwd(), 'dist'),
+    library: 'svg-to-excalidraw',
+    libraryTarget: 'umd',
+    publicPath: '/static/',
+    umdNamedDefine: true,
+  },
+}
+
+const esmConfig = {
+  ...baseConfig,
+  output: {
+    filename: 'esm-bundle.js',
+    path: path.resolve(process.cwd(), 'dist'),
+    libraryTarget: 'module',
+    publicPath: '/static/',
+    umdNamedDefine: true,
+    module: true,
+  },
+  experiments: {
+    outputModule: true,
+  },
+};
+
+module.exports = [umdConfig, esmConfig];
