@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2021: true,
+    node: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -71,4 +72,12 @@ module.exports = {
     'brace-style': [2, '1tbs', { allowSingleLine: true }],
     '@typescript-eslint/ban-ts-comment': 0,
   },
+  "overrides": [
+    {
+      "files": ["webpack.config.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": 0,
+      },
+    },
+  ],
 };

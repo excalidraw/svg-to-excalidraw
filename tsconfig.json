@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {}
+  },
+  "include": [
+    "src",
+    "svg-to-excalidraw.d.ts"
+  ],
+  "exclude": [
+    "src/test"
+  ]
+}
