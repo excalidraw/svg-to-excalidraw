@@ -5,7 +5,7 @@ const SUPPORTED_TAGS = ["svg", "path"];
  * @todo Handle parsing errors
  * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
  */
-export function getDOMFromString(svgString: string): XMLDocument {
+function getDOMFromString(svgString: string): XMLDocument {
   const parser = new DOMParser();
   const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
 
@@ -18,7 +18,7 @@ export function getDOMFromString(svgString: string): XMLDocument {
  * Validate a node given by TreeWalker iteration algorithm
  * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
  */
-export function nodeValidator(el: Element): number {
+function nodeValidator(el: Element): number {
   if (SUPPORTED_TAGS.includes(el.tagName)) {
     console.debug("Allowing node:", el.tagName);
 
@@ -30,7 +30,7 @@ export function nodeValidator(el: Element): number {
   return NodeFilter.FILTER_REJECT;
 }
 
-export function getNodeListFromDOM(dom: XMLDocument): Element[] {
+function getNodeListFromDOM(dom: XMLDocument): Element[] {
   const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
     acceptNode: nodeValidator,
   });
