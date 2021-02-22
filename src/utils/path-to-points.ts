@@ -1,4 +1,4 @@
-import { cubic } from "./bezier";
+import { cubicCurveToPoints } from "./bezier";
 
 const PATH_COMMANDS_REGEX = /(?:(M(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(m(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(?:(L(?:-?\d+(?:\.\d+)?(?:,| )?){2}))|(l(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(H-?\d+(?:\.\d+)?)|(V-?\d+(?:\.\d+)?)|(h-?\d+(?:\.\d+)?)|(v-?\d+(?:\.\d+)?)|(C(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(c(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(z|Z))/g;
 const COMMAND_REGEX = /(?:[MmLlHhVvCcZz]|(-?\d+(?:\.\d+)?))/g;
@@ -101,7 +101,7 @@ export default function pathToPoints(path: string): number[][][] {
               );
             }
 
-            const coordinatesList = cubic(controlPoints);
+            const coordinatesList = cubicCurveToPoints(controlPoints);
 
             points.push(...coordinatesList);
 
