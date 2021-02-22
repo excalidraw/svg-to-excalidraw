@@ -85,9 +85,8 @@ npm run commit
 
 ### JavaScript styleguide
 
-All JavaScript code is linted with [standard code style][standard] through [eslint][eslint].
+All JavaScript code is linted with [eslint][eslint] and formatted with [prettier][eslint].
 
-- Make sure your code is compatible with at least Node.js 8
 - Place requires in the following order:
   - Built in Node Modules (such as `path`)
   - Local Modules (using relative paths)
