@@ -10,9 +10,10 @@
     "clean": "rimraf dist",
     "build": "npm run clean && webpack --config webpack.config.js",
     "build:watch": "npm run clean && webpack --config webpack.config.js --watch",
-    "lint": "eslint .",
     "dev:serve": "serve",
     "check-types": "tsc",
+    "lint:check": "eslint .",
+    "lint:write": "eslint . --fix",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write ."
   },
