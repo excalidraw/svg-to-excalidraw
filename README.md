@@ -16,7 +16,7 @@ Library to convert SVG to Excalidraw’s file format.
 ## :floppy_disk: Installation
 
 ```bash
-npm install svg-to-excalidraw --save # or yarn add svg-to-excalidraw
+yarn add svg-to-excalidraw
 ```
 
 ## :beginner: Usage
@@ -32,9 +32,10 @@ TODO.
 #### Building the Project
 
 ```bash
-npm run build # builds the project
-# or
-npm run build:watch # builds project whenever a file is updated.
+yarn build
+
+# Build and watch whenever a file is updated
+yarn build:watch
 ```
 
 #### Running dev pages locally
@@ -42,7 +43,7 @@ npm run build:watch # builds project whenever a file is updated.
 There are a number of pages that exist in the `dev` folder that help in local development. These files need to be served, but a local dev serve is provided via the [serve library][serve].
 
 ```bash
-npm run dev:serve
+yarn dev:serve
 # open up a browser page to localhost:5000/dev
 ```
 

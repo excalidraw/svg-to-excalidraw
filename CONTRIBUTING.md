@@ -77,10 +77,10 @@ While the prerequisites above must be satisfied prior to having your pull reques
 
 This project uses [commitlint][commitlint] with the [conventional commit config][commitlint-config-conventional]. Git hooks are defined with [husky][husky] to enforce this commit-style.
 
-If you're not familiar with this commit-style, you can run the following convenience npm script that will guide you through the process of authoring your commits:
+If you're not familiar with this commit-style, you can run the following convenience package script that will guide you through the process of authoring your commits:
 
 ```shell
-npm run commit
+yarn commit
 ```
 
 ### JavaScript styleguide
