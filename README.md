@@ -2,9 +2,7 @@
 
 Library to convert SVG to Excalidraw’s file format.
 
-[![npm][npmshield]][npmpackage]
-[![JavaScript Style Guide][standardshield]][standard]
-[![license][licenseshield]][license]
+[![npm][npmshield]][npmpackage] [![JavaScript Style Guide][standardshield]][standard] [![license][licenseshield]][license]
 
 ## :book: Table of contents
 
