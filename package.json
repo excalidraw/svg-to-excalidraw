@@ -1,0 +1,70 @@
+{
+  "name": "svg-to-excalidraw",
+  "version": "0.0.0",
+  "description": "Convert SVG to Excalidraw’s file format",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "build": "yarn clean && webpack --config webpack.config.js",
+    "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
+    "clean": "rimraf dist",
+    "dev:serve": "serve",
+    "fix": "yarn fix:other && yarn fix:code",
+    "fix:code": "yarn test:code -- --fix",
+    "fix:other": "yarn prettier -- --write",
+    "lint:check": "eslint .",
+    "lint:write": "eslint . --fix",
+    "postinstall": "husky install",
+    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\" --ignore-path=.eslintignore",
+    "test": "yarn test:typecheck && yarn test:code && yarn test:other",
+    "test:code": "eslint --max-warnings=0 --ignore-path .gitignore --ext .js,.ts,.tsx .",
+    "test:other": "yarn prettier -- --list-different",
+    "test:typecheck": "tsc"
+  },
+  "prettier": "@excalidraw/prettier-config",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/excalidraw/svg-to-excalidraw.git"
+  },
+  "keywords": [
+    "excalidraw",
+    "svg",
+    "svg-to-excalidraw"
+  ],
+  "author": "Nicolas Goudry <goudry.nicolas@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/excalidraw/svg-to-excalidraw.git/issues"
+  },
+  "files": [
+    "dist/bundle.js",
+    "svg-to-excalidraw.d.ts"
+  ],
+  "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme",
+  "devDependencies": {
+    "@babel/core": "7.12.17",
+    "@babel/plugin-proposal-class-properties": "7.12.13",
+    "@babel/plugin-proposal-object-rest-spread": "7.12.13",
+    "@babel/plugin-syntax-dynamic-import": "7.8.3",
+    "@babel/preset-env": "7.12.17",
+    "@babel/preset-typescript": "7.12.17",
+    "@excalidraw/prettier-config": "1.0.1",
+    "@typescript-eslint/eslint-plugin": "4.15.1",
+    "@typescript-eslint/parser": "4.15.1",
+    "babel-eslint": "10.1.0",
+    "babel-loader": "8.2.2",
+    "eslint": "7.20.0",
+    "eslint-config-prettier": "7.2.0",
+    "eslint-plugin-import": "2.22.1",
+    "husky": "5.0.9",
+    "lint-staged": "10.5.4",
+    "prettier": "2.2.1",
+    "serve": "11.3.2",
+    "typescript": "4.1.5",
+    "webpack": "5.23.0",
+    "webpack-cli": "4.5.0"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
+}
