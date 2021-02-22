@@ -4,18 +4,21 @@
   "description": "Convert SVG to Excalidraw’s file format",
   "main": "dist/bundle.js",
   "scripts": {
-    "postinstall": "husky install",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "commit",
-    "clean": "rimraf dist",
     "build": "yarn clean && webpack --config webpack.config.js",
     "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
+    "clean": "rimraf dist",
     "dev:serve": "serve",
-    "check-types": "tsc",
+    "fix": "yarn fix:other && yarn fix:code",
+    "fix:code": "yarn test:code -- --fix",
+    "fix:other": "yarn prettier -- --write",
     "lint:check": "eslint .",
     "lint:write": "eslint . --fix",
-    "prettier:check": "prettier --check .",
-    "prettier:write": "prettier --write ."
+    "postinstall": "husky install",
+    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\" --ignore-path=.eslintignore",
+    "test": "yarn test:code && yarn test:other",
+    "test:code": "eslint --max-warnings=0 --ignore-path .gitignore --ext .js,.ts,.tsx .",
+    "test:other": "yarn prettier -- --list-different",
+    "test:typecheck": "tsc"
   },
   "prettier": "@excalidraw/prettier-config",
   "repository": {
