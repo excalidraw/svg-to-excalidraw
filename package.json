@@ -16,6 +16,7 @@
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write ."
   },
+  "prettier": "@excalidraw/prettier-config",
   "repository": {
     "type": "git",
     "url": "https://github.com/excalidraw/svg-to-excalidraw.git"
@@ -48,6 +49,7 @@
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@commitlint/prompt-cli": "^11.0.0",
+    "@excalidraw/prettier-config": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "babel-eslint": "^10.1.0",
