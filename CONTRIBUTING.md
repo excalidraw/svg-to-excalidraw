@@ -6,7 +6,6 @@ The following is a set of guidelines for contributing to `svg-to-excalidraw`. Th
 
 ## Table of contents
 
-- [Code of Conduct][code-of-conduct]
 - [I just have a question][question]
 - [How can I contribute?][how-can-i-contribute]
   - [Reporting bugs][reporting-bugs]
@@ -97,7 +96,6 @@ All JavaScript code is linted with [standard code style][standard] through [esli
   - Instance methods and properties
 - Avoid platform-dependent code
 
-[code-of-conduct]: https://github.com/excalidraw/svg-to-excalidraw/blob/main/CODE_OF_CONDUCT.md
 [question]: #i-just-have-a-question
 [discord]: https://discord.gg/UexuTaE
 [how-can-i-contribute]: #how-can-i-contribute
