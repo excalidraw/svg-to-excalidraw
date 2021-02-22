@@ -2,14 +2,14 @@ const SUPPORTED_TAGS = ["svg", "path"];
 
 /**
  * Get a DOM representation of a SVG file
- * @param {String} string SVG content to parse
+ * @param {String} svgString SVG content to parse
  * @returns {XMLDocument}
  * @todo Handle parsing errors
  * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
  */
-function getDOMFromString(string) {
+export function getDOMFromString(svgString: string): XMLDocument {
   const parser = new DOMParser();
-  const svgDOM = parser.parseFromString(string, "image/svg+xml");
+  const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
 
   console.debug("Parsed DOM:", svgDOM);
 
@@ -18,18 +18,18 @@ function getDOMFromString(string) {
 
 /**
  * Validate a node given by TreeWalker iteration algorithm
- * @param {Node} node Node to check
- * @returns {unsigned short}
+ * @param {Element} el Node to check
+ * @returns {number} bit mask (unsigned short)
  * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
  */
-function nodeValidator(node) {
-  if (SUPPORTED_TAGS.includes(node.tagName)) {
-    console.debug("Allowing node:", node.tagName);
+export function nodeValidator(el: Element): number {
+  if (SUPPORTED_TAGS.includes(el.tagName)) {
+    console.debug("Allowing node:", el.tagName);
 
     return NodeFilter.FILTER_ACCEPT;
   }
 
-  console.debug("Rejecting node:", node.tagName || node.nodeName);
+  console.debug("Rejecting node:", el.tagName || el.nodeName);
 
   return NodeFilter.FILTER_REJECT;
 }
@@ -39,11 +39,12 @@ function nodeValidator(node) {
  * @param {XMLDocument} dom DOM representation
  * @returns {NodeList}
  */
-function getNodeListFromDOM(dom) {
+export function getNodeListFromDOM(dom: XMLDocument): Element[] {
   const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
     acceptNode: nodeValidator,
   });
-  const nodeList = [];
+
+  const nodeList: Element[] = [];
   let currentNode = true;
 
   while (currentNode) {
@@ -51,6 +52,7 @@ function getNodeListFromDOM(dom) {
       nodeList.push(currentNode);
     }
 
+    // @ts-ignore // will update in a bit.
     currentNode = treeWalker.nextNode();
   }
 
@@ -62,7 +64,7 @@ function getNodeListFromDOM(dom) {
  * @param {String} input SVG content to parse
  * @returns {NodeList}
  */
-function parse(input) {
+export function parse(input: string): Element[] {
   const svgDOM = getDOMFromString(input);
   const nodeList = getNodeListFromDOM(svgDOM);
 
@@ -70,5 +72,3 @@ function parse(input) {
 
   return nodeList;
 }
-
-window.svgParse = parse;
