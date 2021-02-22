@@ -16,14 +16,6 @@ const babelLoaderConfig = {
 
 const baseConfig = {
   entry: [path.join(process.cwd(), "src/index.ts")],
-  // output: {
-  //   filename: 'bundle.js',
-  //   path: path.resolve(process.cwd(), 'dist'),
-  //   library: 'svg-to-excalidraw',
-  //   libraryTarget: 'umd',
-  //   publicPath: '/static/',
-  //   umdNamedDefine: true,
-  // },
   mode: "production",
   devtool: "eval-source-map",
   resolve: {
