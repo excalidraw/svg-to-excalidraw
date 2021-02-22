@@ -14,5 +14,6 @@ jobs:
       - name: Install and lint
         run: |
           yarn --frozen-lockfile
-          yarn prettier:check
-          yarn lint:check
+          yarn test:other
+          yarn test:code
+          yarn test:typecheck
