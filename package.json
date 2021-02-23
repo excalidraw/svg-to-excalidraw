@@ -48,7 +48,7 @@
     "@babel/preset-env": "7.12.17",
     "@babel/preset-typescript": "7.13.0",
     "@excalidraw/prettier-config": "1.0.1",
-    "@typescript-eslint/eslint-plugin": "4.15.1",
+    "@typescript-eslint/eslint-plugin": "4.15.2",
     "@typescript-eslint/parser": "4.15.1",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.2.2",
