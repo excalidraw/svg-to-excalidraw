@@ -1,38 +1,39 @@
+import { ExcalidrawDrawElement } from '../../types'
 import { getElementBoundaries } from '../utils'
 import pathToPoints from './utils/path-to-points'
 
 function parse(node: Element) {
-  const data = node.getAttribute('d')
-  const color = node.getAttribute('fill')
+  const data = node.getAttribute('d');
+  const color = node.getAttribute('fill');
   const parsedResult = {
     data: '',
     color: '',
-  }
+  };
   
   if (data) {
-    parsedResult.data = data
+    parsedResult.data = data;
   }
 
   if (color) {
-    parsedResult.color = color
+    parsedResult.color = color;
   }
 
-  return parsedResult
+  return parsedResult;
 }
 
-export function convert(node: Element): DrawElement[] {
-  const { data } = parse(node)
-  const elementsPoints = pathToPoints(data)
+export function convert(node: Element): ExcalidrawDrawElement[] {
+  const { data } = parse(node);
+  const elementsPoints = pathToPoints(data);
 
-  console.log('Points:', elementsPoints)
+  console.log('Points:', elementsPoints);
 
   return elementsPoints.map((points) => {
-    const boundaries = getElementBoundaries(points)
+    const boundaries = getElementBoundaries(points);
 
     return {
       type: 'draw',
       ...boundaries,
       points,
-    }
-  })
+    };
+  });
 }

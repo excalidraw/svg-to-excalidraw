@@ -1,5 +1,6 @@
-import elements from './elements'
-import { safeNumber } from './utils'
+import elements from './elements';
+import { ExcalidrawElement } from './types';
+import { safeNumber } from './utils';
 
 const SUPPORTED_TAGS = ['svg', 'path'];
 
@@ -53,16 +54,16 @@ function getNodeListFromDOM(dom: XMLDocument): Element[] {
   return nodeList;
 }
 
-function calculateElementsPositions(excalidrawElements: DrawElement[]): DrawElement[] {
+function calculateElementsPositions(excalidrawElements: ExcalidrawElement[]): ExcalidrawElement[] {
   const { x: minX, y: minY } = excalidrawElements.reduce((minCoordinates, { x, y }) => {
-    if (x < minCoordinates.x) minCoordinates.x = x
-    if (y < minCoordinates.y) minCoordinates.y = y
+    if (x < minCoordinates.x) minCoordinates.x = x;
+    if (y < minCoordinates.y) minCoordinates.y = y;
 
-    return minCoordinates
+    return minCoordinates;
   }, {
     x: Infinity,
     y: Infinity,
-  })
+  });
 
   return excalidrawElements.map((element) => ({
     ...element,
@@ -72,11 +73,11 @@ function calculateElementsPositions(excalidrawElements: DrawElement[]): DrawElem
     ]),
     x: safeNumber(element.x - minX),
     y: safeNumber(element.y - minY),
-  }))
+  }));
 }
 
-function handleElements(nodeList: Element[]): DrawElement[] {
-  const excalidrawElements = []
+function handleElements(nodeList: Element[]): ExcalidrawElement[] {
+  const excalidrawElements = [];
 
   for (const node of nodeList) {
     switch (node.nodeName) {
@@ -88,10 +89,10 @@ function handleElements(nodeList: Element[]): DrawElement[] {
         break;
       }
       case 'path': {
-        const pathElements = elements.path.convert(node)
+        const pathElements = elements.path.convert(node);
 
         if (pathElements.length) {
-          excalidrawElements.push(...pathElements)
+          excalidrawElements.push(...pathElements);
         }
 
         break;
@@ -99,13 +100,13 @@ function handleElements(nodeList: Element[]): DrawElement[] {
     }
   }
 
-  return calculateElementsPositions(excalidrawElements)
+  return calculateElementsPositions(excalidrawElements);
 }
 
 /**
  * Parse a SVG file content
  */
-export function parse(input: string): any {
+export function parse(input: string): ExcalidrawElement[] {
   const svgDOM = getDOMFromString(input);
   const nodeList = getNodeListFromDOM(svgDOM);
 
