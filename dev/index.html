@@ -64,7 +64,7 @@
         reader.addEventListener("load", (event) => {
           const nl = svgParse.parse(event.target.result);
 
-          console.log("nodelist: ", nl);
+          console.log("parse result: ", nl);
 
           document.getElementById("result").value =
             "See console output (verbose level)";

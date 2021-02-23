@@ -1,4 +1,7 @@
-const SUPPORTED_TAGS = ["svg", "path"];
+import elements from './elements'
+import { safeNumber } from './utils'
+
+const SUPPORTED_TAGS = ['svg', 'path'];
 
 /**
  * Get a DOM representation of a SVG file content
@@ -50,15 +53,65 @@ function getNodeListFromDOM(dom: XMLDocument): Element[] {
   return nodeList;
 }
 
+function calculateElementsPositions(excalidrawElements: DrawElement[]): DrawElement[] {
+  const { x: minX, y: minY } = excalidrawElements.reduce((minCoordinates, { x, y }) => {
+    if (x < minCoordinates.x) minCoordinates.x = x
+    if (y < minCoordinates.y) minCoordinates.y = y
+
+    return minCoordinates
+  }, {
+    x: Infinity,
+    y: Infinity,
+  })
+
+  return excalidrawElements.map((element) => ({
+    ...element,
+    points: element.points.map(([x, y]) => [
+      safeNumber(x - minX),
+      safeNumber(y - minY),
+    ]),
+    x: safeNumber(element.x - minX),
+    y: safeNumber(element.y - minY),
+  }))
+}
+
+function handleElements(nodeList: Element[]): DrawElement[] {
+  const excalidrawElements = []
+
+  for (const node of nodeList) {
+    switch (node.nodeName) {
+      case 'svg': {
+        const viewBox = node.getAttribute('viewBox');
+
+        console.log('Viewbox:', viewBox);
+
+        break;
+      }
+      case 'path': {
+        const pathElements = elements.path.convert(node)
+
+        if (pathElements.length) {
+          excalidrawElements.push(...pathElements)
+        }
+
+        break;
+      }
+    }
+  }
+
+  return calculateElementsPositions(excalidrawElements)
+}
+
 /**
  * Parse a SVG file content
  */
-export function parse(input: string): Element[] {
+export function parse(input: string): any {
   const svgDOM = getDOMFromString(input);
-
   const nodeList = getNodeListFromDOM(svgDOM);
 
   console.debug("Fetched nodes:", nodeList);
 
-  return nodeList;
+  const elements = handleElements(nodeList);
+
+  return elements;
 }

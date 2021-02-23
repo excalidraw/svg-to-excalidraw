@@ -1,5 +1,7 @@
+import { safeNumber } from '../../../utils'
+
 /**
- * Get coordinates x,y of a point at a given section of a cubic bezier curve
+ * Get coordinates x,y of a point at a given section of a cubic bezier curve.
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
  */
 function getPointOfCubicCurve(
@@ -14,17 +16,17 @@ function getPointOfCubicCurve(
       3 * controlPoints[2][i] * section ** 2 * (1 - section) +
       controlPoints[3][i] * section ** 3;
 
-    return Number(pointCoordinate.toFixed(2));
+    return safeNumber(pointCoordinate);
   });
 }
 
 /**
- * Get list of coordinates for a cubic bézier curve
+ * Get list of coordinates for a cubic bézier curve.
  * Starting point is not returned
  */
 export function cubicCurveToPoints(
   controlPoints: number[][],
-  nbPoints = 4,
+  nbPoints = 10,
 ): number[][] {
   if (nbPoints <= 0) {
     throw new Error("Precision must be positive");
@@ -33,7 +35,7 @@ export function cubicCurveToPoints(
   }
 
   return Array.from({ length: nbPoints }, (value, index) => {
-    const section = Number((((100 / nbPoints) * (index + 1)) / 100).toFixed(2));
+    const section = safeNumber(((100 / nbPoints) * (index + 1)) / 100);
 
     return getPointOfCubicCurve(controlPoints, section);
   });
