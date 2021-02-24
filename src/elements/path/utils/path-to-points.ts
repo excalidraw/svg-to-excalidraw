@@ -1,5 +1,5 @@
-import { Coordinates } from '../../../types';
-import { safeNumber } from '../../../utils';
+import { Coordinates } from "../../../types";
+import { safeNumber } from "../../../utils";
 import { cubicCurveToPoints } from "./bezier";
 
 const PATH_COMMANDS_REGEX = /(?:(M(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(m(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(?:(L(?:-?\d+(?:\.\d+)?(?:,| )?){2}))|(l(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(H-?\d+(?:\.\d+)?)|(V-?\d+(?:\.\d+)?)|(h-?\d+(?:\.\d+)?)|(v-?\d+(?:\.\d+)?)|(C(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(c(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(z|Z))/g;
@@ -117,11 +117,11 @@ const pathToPoints = (path: string): Coordinates[][] => {
             );
           }
 
-          console.log('Control points:', controlPoints);
+          console.log("Control points:", controlPoints);
 
           const coordinatesList = cubicCurveToPoints(controlPoints);
 
-          console.log('Curve coordinates:', coordinatesList);
+          console.log("Curve coordinates:", coordinatesList);
 
           points.push(...coordinatesList);
 
@@ -143,8 +143,8 @@ const pathToPoints = (path: string): Coordinates[][] => {
       console.error("Unsupported command provided will be ignored:", command);
     }
 
-    console.log('Current position:', currentPosition);
-    console.log('Last point:', points[points.length - 1]);
+    console.log("Current position:", currentPosition);
+    console.log("Last point:", points[points.length - 1]);
     console.groupEnd();
   }
 

@@ -1,8 +1,8 @@
-import elements from './elements';
-import { ExcalidrawElement } from './types';
-import { safeNumber } from './utils';
+import elements from "./elements";
+import { ExcalidrawElement } from "./types";
+import { safeNumber } from "./utils";
 
-const SUPPORTED_TAGS = ['svg', 'path'];
+const SUPPORTED_TAGS = ["svg", "path"];
 
 /**
  * Get a DOM representation of a SVG file content
@@ -81,14 +81,14 @@ const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
 
   for (const node of nodeList) {
     switch (node.nodeName) {
-      case 'svg': {
-        const viewBox = node.getAttribute('viewBox');
+      case "svg": {
+        const viewBox = node.getAttribute("viewBox");
 
-        console.log('Viewbox:', viewBox);
+        console.log("Viewbox:", viewBox);
 
         break;
       }
-      case 'path': {
+      case "path": {
         const pathElements = elements.path.convert(node);
 
         if (pathElements.length) {

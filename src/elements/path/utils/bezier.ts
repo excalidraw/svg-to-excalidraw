@@ -1,5 +1,5 @@
-import { Coordinates } from '../../../types';
-import { safeNumber } from '../../../utils';
+import { Coordinates } from "../../../types";
+import { safeNumber } from "../../../utils";
 
 /**
  * Get coordinates x,y of a point at a given section of a cubic bezier curve.
