@@ -1,5 +1,6 @@
 export type ExcalidrawDrawElement = {
   type: "draw",
+  strokeSharpness: "sharp",
   x: number,
   y: number,
   width: number,

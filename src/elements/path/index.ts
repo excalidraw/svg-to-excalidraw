@@ -32,6 +32,7 @@ export const convert = (node: Element): ExcalidrawDrawElement[] => {
 
     return {
       type: "draw",
+      strokeSharpness: "sharp",
       ...boundaries,
       points,
     };
