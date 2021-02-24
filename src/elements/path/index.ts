@@ -2,7 +2,7 @@ import { ExcalidrawDrawElement } from '../../types'
 import { getElementBoundaries } from '../utils'
 import pathToPoints from './utils/path-to-points'
 
-function parse(node: Element) {
+const parse = (node: Element) => {
   const data = node.getAttribute('d');
   const color = node.getAttribute('fill');
   const parsedResult = {
@@ -21,7 +21,7 @@ function parse(node: Element) {
   return parsedResult;
 }
 
-export function convert(node: Element): ExcalidrawDrawElement[] {
+export const convert = (node: Element): ExcalidrawDrawElement[] => {
   const { data } = parse(node);
   const elementsPoints = pathToPoints(data);
 

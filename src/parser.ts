@@ -9,7 +9,7 @@ const SUPPORTED_TAGS = ['svg', 'path'];
  * @todo Handle parsing errors
  * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
  */
-function getDOMFromString(svgString: string): XMLDocument {
+const getDOMFromString = (svgString: string): XMLDocument => {
   const parser = new DOMParser();
   const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
 
@@ -22,7 +22,7 @@ function getDOMFromString(svgString: string): XMLDocument {
  * Validate a node given by TreeWalker iteration algorithm
  * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
  */
-function nodeValidator(el: Element): number {
+const nodeValidator = (el: Element): number => {
   if (SUPPORTED_TAGS.includes(el.tagName)) {
     console.debug("Allowing node:", el.tagName);
 
@@ -34,7 +34,7 @@ function nodeValidator(el: Element): number {
   return NodeFilter.FILTER_REJECT;
 }
 
-function getNodeListFromDOM(dom: XMLDocument): Element[] {
+const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
   const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
     acceptNode: nodeValidator,
   });
@@ -54,7 +54,7 @@ function getNodeListFromDOM(dom: XMLDocument): Element[] {
   return nodeList;
 }
 
-function calculateElementsPositions(excalidrawElements: ExcalidrawElement[]): ExcalidrawElement[] {
+const calculateElementsPositions = (excalidrawElements: ExcalidrawElement[]): ExcalidrawElement[] => {
   const { x: minX, y: minY } = excalidrawElements.reduce((minCoordinates, { x, y }) => {
     if (x < minCoordinates.x) minCoordinates.x = x;
     if (y < minCoordinates.y) minCoordinates.y = y;
@@ -76,7 +76,7 @@ function calculateElementsPositions(excalidrawElements: ExcalidrawElement[]): Ex
   }));
 }
 
-function handleElements(nodeList: Element[]): ExcalidrawElement[] {
+const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
   const excalidrawElements = [];
 
   for (const node of nodeList) {
@@ -106,7 +106,7 @@ function handleElements(nodeList: Element[]): ExcalidrawElement[] {
 /**
  * Parse a SVG file content
  */
-export function parse(input: string): ExcalidrawElement[] {
+export const parse = (input: string): ExcalidrawElement[] => {
   const svgDOM = getDOMFromString(input);
   const nodeList = getNodeListFromDOM(svgDOM);
 

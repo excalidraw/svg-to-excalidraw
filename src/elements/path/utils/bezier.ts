@@ -5,10 +5,10 @@ import { safeNumber } from '../../../utils';
  * Get coordinates x,y of a point at a given section of a cubic bezier curve.
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
  */
-function getPointOfCubicCurve(
+const getPointOfCubicCurve = (
   controlPoints: Coordinates[],
   section: number,
-): Coordinates {
+): Coordinates => {
   // Support only two dimensions curves
   return Array.from({ length: 2 }).map((v, i) => {
     const pointCoordinate =
@@ -25,10 +25,10 @@ function getPointOfCubicCurve(
  * Get list of coordinates for a cubic bézier curve.
  * Starting point is not returned
  */
-export function cubicCurveToPoints(
+export const cubicCurveToPoints = (
   controlPoints: Coordinates[],
   nbPoints = 10,
-): Coordinates[] {
+): Coordinates[] => {
   if (nbPoints <= 0) {
     throw new Error("Precision must be positive");
   } else if (nbPoints > 100) {

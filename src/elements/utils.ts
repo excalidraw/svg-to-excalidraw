@@ -1,6 +1,6 @@
 import { ElementBoundaries } from "../types";
 
-export function getElementBoundaries(coordinates: number[][]): ElementBoundaries {
+export const getElementBoundaries = (coordinates: number[][]): ElementBoundaries => {
   const { x, y } = coordinates.reduce((boundaries, [x, y]) => {
     if (x < boundaries.x.min) boundaries.x.min = x;
     if (x > boundaries.x.max) boundaries.x.max = x;

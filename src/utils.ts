@@ -1,3 +1,1 @@
-export function safeNumber(number: number): number {
-  return Number(number.toFixed(2));
-}
+export const safeNumber = (number: number): number => Number(number.toFixed(2));
