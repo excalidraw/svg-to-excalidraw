@@ -65,15 +65,20 @@ const calculateElementsPositions = (excalidrawElements: ExcalidrawElement[]): Ex
     y: Infinity,
   });
 
-  return excalidrawElements.map((element) => ({
-    ...element,
-    points: element.points.map(([x, y]) => [
-      safeNumber(x - minX),
-      safeNumber(y - minY),
-    ]),
-    x: safeNumber(element.x - minX),
-    y: safeNumber(element.y - minY),
-  }));
+  return excalidrawElements.map((element) => {
+    const x = safeNumber(element.x - minX)
+    const y = safeNumber(element.y - minY)
+
+    return {
+      ...element,
+      points: element.points.map(([pointX, pointY]) => [
+        safeNumber(pointX - x - minX),
+        safeNumber(pointY - y - minY),
+      ]),
+      x,
+      y,
+    }
+  });
 }
 
 const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
