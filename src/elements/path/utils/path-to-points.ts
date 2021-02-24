@@ -5,37 +5,6 @@ import { cubicCurveToPoints } from "./bezier";
 const PATH_COMMANDS_REGEX = /(?:(M(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(m(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(?:(L(?:-?\d+(?:\.\d+)?(?:,| )?){2}))|(l(?:-?\d+(?:\.\d+)?(?:,| )?){2})|(H-?\d+(?:\.\d+)?)|(V-?\d+(?:\.\d+)?)|(h-?\d+(?:\.\d+)?)|(v-?\d+(?:\.\d+)?)|(C(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(c(?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(z|Z))/g;
 const COMMAND_REGEX = /(?:[MmLlHhVvCcZz]|(-?\d+(?:\.\d+)?))/g;
 
-function expandCoordinates(from: number[], to: number[], indexToExpand: number): Coordinates[] {
-  const distance = Math.round(to[indexToExpand] - from[indexToExpand]);
-  const count = Math.floor(Math.abs(distance / 10));
-  const step = distance < 0 ? -10 : 10;
-  const computedCoordinates = [];
-  
-  for (let i = 1; i <= count; i++) {
-    const newCoordinate = safeNumber(from[indexToExpand] + (i * step));
-
-    if (indexToExpand === 0) {
-      computedCoordinates.push([
-        newCoordinate,
-        from[1],
-      ]);
-    } else if (indexToExpand === 1) {
-      computedCoordinates.push([
-        from[0],
-        newCoordinate,
-      ]);
-    } else {
-      // @TODO
-    }
-  }
-
-  if (Math.abs(distance % 10) > 10) {
-    return computedCoordinates;
-  }
-
-  return [...computedCoordinates, to];
-}
-
 /**
  * Convert a SVG path data to list of coordinates
  */
@@ -95,11 +64,9 @@ export default function pathToPoints(path: string): Coordinates[][] {
             ];
           }
 
-          const coordinatesList = expandCoordinates(currentPosition, targetCoordinate, 0);
+          points.push(targetCoordinate);
 
-          points.push(...coordinatesList);
-
-          currentPosition = coordinatesList[coordinatesList.length - 1];
+          currentPosition = targetCoordinate;
 
           break;
         }
@@ -117,11 +84,9 @@ export default function pathToPoints(path: string): Coordinates[][] {
             ];
           }
 
-          const coordinatesList = expandCoordinates(currentPosition, targetCoordinate, 1);
+          points.push(targetCoordinate);
 
-          points.push(...coordinatesList);
-
-          currentPosition = coordinatesList[coordinatesList.length - 1];
+          currentPosition = targetCoordinate;
 
           break;
         }
