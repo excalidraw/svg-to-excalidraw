@@ -12,7 +12,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
   const commands = path.match(PATH_COMMANDS_REGEX);
   const elements = [];
   let currentPosition = [0, 0];
-  let points = [];
+  let coordinates = [];
 
   if (!commands?.length) {
     throw new Error("No commands found in given path");
@@ -25,13 +25,13 @@ const pathToPoints = (path: string): Coordinates[][] => {
 
     if (commandMatch?.length) {
       const commandType = commandMatch[0];
-      let coordinates = commandMatch
+      let commandCoordinates = commandMatch
         .slice(1, commandMatch.length)
         .map((coordinate) => safeNumber(Number(coordinate)));
       const isRelative = commandType.toLowerCase() === commandType;
 
       console.log("Commande type:", commandType);
-      console.log("Coordinates:", coordinates);
+      console.log("Coordinates:", commandCoordinates);
 
       switch (commandType) {
         case "M":
@@ -39,32 +39,32 @@ const pathToPoints = (path: string): Coordinates[][] => {
         case "L":
         case "l":
           if (isRelative) {
-            coordinates = [
-              currentPosition[0] + coordinates[0],
-              currentPosition[1] + coordinates[1],
+            commandCoordinates = [
+              currentPosition[0] + commandCoordinates[0],
+              currentPosition[1] + commandCoordinates[1],
             ];
           }
 
-          points.push(coordinates);
+          coordinates.push(commandCoordinates);
 
-          currentPosition = coordinates;
+          currentPosition = commandCoordinates;
 
           break;
         case "H":
         case "h": {
           let targetCoordinate = [
-            coordinates[0],
+            commandCoordinates[0],
             currentPosition[1],
           ];
 
           if (isRelative) {
             targetCoordinate = [
-              currentPosition[0] + coordinates[0],
+              currentPosition[0] + commandCoordinates[0],
               currentPosition[1],
             ];
           }
 
-          points.push(targetCoordinate);
+          coordinates.push(targetCoordinate);
 
           currentPosition = targetCoordinate;
 
@@ -74,17 +74,17 @@ const pathToPoints = (path: string): Coordinates[][] => {
         case "v": {
           let targetCoordinate = [
             currentPosition[0],
-            coordinates[0],
+            commandCoordinates[0],
           ];
 
           if (isRelative) {
             targetCoordinate = [
               currentPosition[0],
-              currentPosition[1] + coordinates[0],
+              currentPosition[1] + commandCoordinates[0],
             ];
           }
 
-          points.push(targetCoordinate);
+          coordinates.push(targetCoordinate);
 
           currentPosition = targetCoordinate;
 
@@ -97,23 +97,23 @@ const pathToPoints = (path: string): Coordinates[][] => {
           if (isRelative) {
             controlPoints.push(
               [
-                currentPosition[0] + coordinates[0],
-                currentPosition[1] + coordinates[1],
+                currentPosition[0] + commandCoordinates[0],
+                currentPosition[1] + commandCoordinates[1],
               ],
               [
-                currentPosition[0] + coordinates[2],
-                currentPosition[1] + coordinates[3],
+                currentPosition[0] + commandCoordinates[2],
+                currentPosition[1] + commandCoordinates[3],
               ],
               [
-                currentPosition[0] + coordinates[4],
-                currentPosition[1] + coordinates[5],
+                currentPosition[0] + commandCoordinates[4],
+                currentPosition[1] + commandCoordinates[5],
               ],
             );
           } else {
             controlPoints.push(
-              [coordinates[0], coordinates[1]],
-              [coordinates[2], coordinates[3]],
-              [coordinates[4], coordinates[5]],
+              [commandCoordinates[0], commandCoordinates[1]],
+              [commandCoordinates[2], commandCoordinates[3]],
+              [commandCoordinates[4], commandCoordinates[5]],
             );
           }
 
@@ -123,7 +123,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
 
           console.log("Curve coordinates:", coordinatesList);
 
-          points.push(...coordinatesList);
+          coordinates.push(...coordinatesList);
 
           currentPosition = coordinatesList[coordinatesList.length - 1];
 
@@ -131,11 +131,11 @@ const pathToPoints = (path: string): Coordinates[][] => {
         }
         case "Z":
         case "z":
-          if (points.length) {
-            elements.push(points);
+          if (coordinates.length) {
+            elements.push(coordinates);
           }
       
-          points = [];
+          coordinates = [];
 
           break;
       }
@@ -144,7 +144,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
     }
 
     console.log("Current position:", currentPosition);
-    console.log("Last point:", points[points.length - 1]);
+    console.log("Last point:", coordinates[coordinates.length - 1]);
     console.groupEnd();
   }
 

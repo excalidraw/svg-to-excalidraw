@@ -1,4 +1,4 @@
-import { ExcalidrawDrawElement } from "../../types"
+import { RawElement } from "../../types"
 import { getElementBoundaries } from "../utils"
 import pathToPoints from "./utils/path-to-points"
 
@@ -21,20 +21,19 @@ const parse = (node: Element) => {
   return parsedResult;
 }
 
-export const convert = (node: Element): ExcalidrawDrawElement[] => {
+export const convert = (node: Element): RawElement[] => {
   const { data } = parse(node);
-  const elementsPoints = pathToPoints(data);
+  const elementsCoordinates = pathToPoints(data);
 
-  console.log("Points:", elementsPoints);
+  console.log("Points:", elementsCoordinates);
 
-  return elementsPoints.map((points) => {
-    const boundaries = getElementBoundaries(points);
+  return elementsCoordinates.map((coordinates) => {
+    const boundaries = getElementBoundaries(coordinates);
 
     return {
       type: "draw",
-      strokeSharpness: "sharp",
+      points: coordinates,
       ...boundaries,
-      points,
     };
   });
 }

@@ -1,6 +1,5 @@
-export type ExcalidrawDrawElement = {
-  type: "draw",
-  strokeSharpness: "sharp",
+export type RawElement = {
+  type: string,
   x: number,
   y: number,
   width: number,
@@ -17,5 +16,13 @@ export type ElementBoundaries = {
 
 export type Coordinates = number[];
 
-export type ExcalidrawElement =
-  | ExcalidrawDrawElement;
+export type ExcalidrawElement = RawElement & {
+  angle: number,
+  fillStyle: string,
+  opacity: number,
+  roughness: number,
+  seed: number,
+  strokeColor: string,
+  strokeSharpness: string,
+  strokeWidth: number,
+};
