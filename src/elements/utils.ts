@@ -1,23 +1,28 @@
 import { ElementBoundaries } from "../types";
 
-export const getElementBoundaries = (coordinates: number[][]): ElementBoundaries => {
-  const { x, y } = coordinates.reduce((boundaries, [x, y]) => {
-    if (x < boundaries.x.min) boundaries.x.min = x;
-    if (x > boundaries.x.max) boundaries.x.max = x;
-    if (y < boundaries.y.min) boundaries.y.min = y;
-    if (y > boundaries.y.max) boundaries.y.max = y;
+export const getElementBoundaries = (
+  coordinates: number[][],
+): ElementBoundaries => {
+  const { x, y } = coordinates.reduce(
+    (boundaries, [x, y]) => {
+      if (x < boundaries.x.min) boundaries.x.min = x;
+      if (x > boundaries.x.max) boundaries.x.max = x;
+      if (y < boundaries.y.min) boundaries.y.min = y;
+      if (y > boundaries.y.max) boundaries.y.max = y;
 
-    return boundaries;
-  }, {
-    x: {
-      min: Infinity,
-      max: 0,
+      return boundaries;
     },
-    y: {
-      min: Infinity,
-      max: 0,
+    {
+      x: {
+        min: Infinity,
+        max: 0,
+      },
+      y: {
+        min: Infinity,
+        max: 0,
+      },
     },
-  });
+  );
 
   return {
     x: x.min,
@@ -25,4 +30,4 @@ export const getElementBoundaries = (coordinates: number[][]): ElementBoundaries
     width: x.max - x.min,
     height: y.max - y.min,
   };
-}
+};

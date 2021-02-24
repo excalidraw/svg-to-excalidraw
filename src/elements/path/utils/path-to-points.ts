@@ -52,10 +52,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
           break;
         case "H":
         case "h": {
-          let targetCoordinate = [
-            commandCoordinates[0],
-            currentPosition[1],
-          ];
+          let targetCoordinate = [commandCoordinates[0], currentPosition[1]];
 
           if (isRelative) {
             targetCoordinate = [
@@ -72,10 +69,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
         }
         case "V":
         case "v": {
-          let targetCoordinate = [
-            currentPosition[0],
-            commandCoordinates[0],
-          ];
+          let targetCoordinate = [currentPosition[0], commandCoordinates[0]];
 
           if (isRelative) {
             targetCoordinate = [
@@ -134,7 +128,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
           if (coordinates.length) {
             elements.push(coordinates);
           }
-      
+
           coordinates = [];
 
           break;
@@ -149,6 +143,6 @@ const pathToPoints = (path: string): Coordinates[][] => {
   }
 
   return elements;
-}
+};
 
 export default pathToPoints;

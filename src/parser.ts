@@ -16,7 +16,7 @@ const getDOMFromString = (svgString: string): XMLDocument => {
   console.debug("Parsed DOM:", svgDOM);
 
   return svgDOM;
-}
+};
 
 /**
  * Validate a node given by TreeWalker iteration algorithm
@@ -32,7 +32,7 @@ const nodeValidator = (node: Element): number => {
   console.debug("Rejecting node:", node.tagName || node.nodeName);
 
   return NodeFilter.FILTER_REJECT;
-}
+};
 
 const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
   const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
@@ -51,22 +51,25 @@ const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
   }
 
   return nodeList;
-}
+};
 
 const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
-  const { x: minX, y: minY } = elements.reduce((minCoordinates, { x, y }) => {
-    if (x < minCoordinates.x) minCoordinates.x = x;
-    if (y < minCoordinates.y) minCoordinates.y = y;
+  const { x: minX, y: minY } = elements.reduce(
+    (minCoordinates, { x, y }) => {
+      if (x < minCoordinates.x) minCoordinates.x = x;
+      if (y < minCoordinates.y) minCoordinates.y = y;
 
-    return minCoordinates;
-  }, {
-    x: Infinity,
-    y: Infinity,
-  });
+      return minCoordinates;
+    },
+    {
+      x: Infinity,
+      y: Infinity,
+    },
+  );
 
   return elements.map((element) => {
-    const x = safeNumber(element.x - minX)
-    const y = safeNumber(element.y - minY)
+    const x = safeNumber(element.x - minX);
+    const y = safeNumber(element.y - minY);
 
     return {
       ...element,
@@ -76,22 +79,23 @@ const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
       ]),
       x,
       y,
-    }
+    };
   });
-}
+};
 
-const convertToExcalidraw = (elements: RawElement[]): ExcalidrawElement[] => elements.map((element) => ({
-  angle: 0,
-  fillStyle: "hachure",
-  opacity: 100,
-  roughness: 1,
-  seed: Math.floor(Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000),
-  strokeColor: "#000000",
-  strokeSharpness: "sharp",
-  strokeWidth: 1,
-  backgroundColor: "transparent",
-  ...element,
-}));
+const convertToExcalidraw = (elements: RawElement[]): ExcalidrawElement[] =>
+  elements.map((element) => ({
+    angle: 0,
+    fillStyle: "hachure",
+    opacity: 100,
+    roughness: 1,
+    seed: Math.floor(Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000),
+    strokeColor: "#000000",
+    strokeSharpness: "sharp",
+    strokeWidth: 1,
+    backgroundColor: "transparent",
+    ...element,
+  }));
 
 const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
   const elements = [];
@@ -118,7 +122,7 @@ const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
   }
 
   return convertToExcalidraw(calculateElementsPositions(elements));
-}
+};
 
 /**
  * Parse a SVG file content
@@ -132,4 +136,4 @@ export const parse = (input: string): ExcalidrawElement[] => {
   const elements = handleElements(nodeList);
 
   return elements;
-}
+};

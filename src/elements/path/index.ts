@@ -1,6 +1,6 @@
-import { RawElement } from "../../types"
-import { getElementBoundaries } from "../utils"
-import pathToPoints from "./utils/path-to-points"
+import { RawElement } from "../../types";
+import { getElementBoundaries } from "../utils";
+import pathToPoints from "./utils/path-to-points";
 
 const parse = (node: Element) => {
   const data = node.getAttribute("d");
@@ -9,7 +9,7 @@ const parse = (node: Element) => {
     data: "",
     color: "",
   };
-  
+
   if (data) {
     parsedResult.data = data;
   }
@@ -19,7 +19,7 @@ const parse = (node: Element) => {
   }
 
   return parsedResult;
-}
+};
 
 export const convert = (node: Element): RawElement[] => {
   const { data } = parse(node);
@@ -36,4 +36,4 @@ export const convert = (node: Element): RawElement[] => {
       ...boundaries,
     };
   });
-}
+};

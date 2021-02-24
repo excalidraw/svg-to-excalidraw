@@ -19,7 +19,7 @@ const getCoordinateOfCubicCurve = (
 
     return safeNumber(coordinates);
   });
-}
+};
 
 /**
  * Get list of coordinates for a cubic bézier curve.
@@ -40,4 +40,4 @@ export const cubicCurveToPoints = (
 
     return getCoordinateOfCubicCurve(controlCoordinates, section);
   });
-}
+};
