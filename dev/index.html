@@ -62,12 +62,13 @@
 
         reader.readAsText(file);
         reader.addEventListener("load", (event) => {
-          const nl = svgParse.parse(event.target.result);
+          const parsingResult = svgParse.parse(event.target.result);
 
-          console.log("parse result: ", nl);
-
-          document.getElementById("result").value =
-            "See console output (verbose level)";
+          document.getElementById("result").value = JSON.stringify(
+            parsingResult,
+            null,
+            2,
+          );
         });
       }
     </script>
