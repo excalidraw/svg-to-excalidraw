@@ -25,4 +25,5 @@ export type ExcalidrawElement = RawElement & {
   strokeColor: string,
   strokeSharpness: string,
   strokeWidth: number,
+  backgroundColor: string,
 };

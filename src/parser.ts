@@ -89,8 +89,9 @@ const convertToExcalidraw = (elements: RawElement[]): ExcalidrawElement[] => ele
   strokeColor: "#000000",
   strokeSharpness: "sharp",
   strokeWidth: 1,
-  ...element
-}))
+  backgroundColor: "transparent",
+  ...element,
+}));
 
 const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
   const elements = [];
