@@ -12,7 +12,7 @@
     "fix:code": "yarn test:code --fix",
     "fix:other": "yarn prettier --write",
     "postinstall": "husky install",
-    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\" --ignore-path=.eslintignore",
+    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml,js,ts}\" --ignore-path=.eslintignore",
     "test": "yarn test:typecheck && yarn test:code && yarn test:other",
     "test:code": "eslint --max-warnings=0 --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test:other": "yarn prettier --list-different",
