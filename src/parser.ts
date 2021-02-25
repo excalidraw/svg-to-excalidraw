@@ -1,5 +1,5 @@
 import elementsConverter from "./elements";
-import { RawElement, ExcalidrawElement, ExcalidrawScene } from "./types";
+import { RawElement, ExcalidrawScene } from "./types";
 import { safeNumber } from "./utils";
 
 const SUPPORTED_TAGS = ["svg", "path"];
