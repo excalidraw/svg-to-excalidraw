@@ -27,3 +27,10 @@ export type ExcalidrawElement = RawElement & {
   strokeWidth: number;
   backgroundColor: string;
 };
+
+export type ExcalidrawScene = {
+  type: "excalidraw";
+  version: 2;
+  source: "https://excalidraw.com";
+  elements: ExcalidrawElement[];
+}

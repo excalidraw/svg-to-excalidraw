@@ -1,5 +1,5 @@
 import elementsConverter from "./elements";
-import { RawElement, ExcalidrawElement } from "./types";
+import { RawElement, ExcalidrawElement, ExcalidrawScene } from "./types";
 import { safeNumber } from "./utils";
 
 const SUPPORTED_TAGS = ["svg", "path"];
@@ -83,21 +83,7 @@ const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
   });
 };
 
-const convertToExcalidraw = (elements: RawElement[]): ExcalidrawElement[] =>
-  elements.map((element) => ({
-    angle: 0,
-    fillStyle: "hachure",
-    opacity: 100,
-    roughness: 1,
-    seed: Math.floor(Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000),
-    strokeColor: "#000000",
-    strokeSharpness: "sharp",
-    strokeWidth: 1,
-    backgroundColor: "transparent",
-    ...element,
-  }));
-
-const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
+const handleElements = (nodeList: Element[]): ExcalidrawScene => {
   const elements = [];
 
   for (const node of nodeList) {
@@ -121,13 +107,29 @@ const handleElements = (nodeList: Element[]): ExcalidrawElement[] => {
     }
   }
 
-  return convertToExcalidraw(calculateElementsPositions(elements));
+  return {
+    type: "excalidraw",
+    version: 2,
+    source: "https://excalidraw.com",
+    elements: calculateElementsPositions(elements).map((element) => ({
+      angle: 0,
+      fillStyle: "hachure",
+      opacity: 100,
+      roughness: 1,
+      seed: Math.floor(Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000),
+      strokeColor: "#000000",
+      strokeSharpness: "sharp",
+      strokeWidth: 1,
+      backgroundColor: "transparent",
+      ...element,
+    })),
+  };
 };
 
 /**
  * Parse a SVG file content
  */
-export const parse = (input: string): ExcalidrawElement[] => {
+export const parse = (input: string): ExcalidrawScene => {
   const svgDOM = getDOMFromString(input);
   const nodeList = getNodeListFromDOM(svgDOM);
 
