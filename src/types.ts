@@ -33,4 +33,4 @@ export type ExcalidrawScene = {
   version: 2;
   source: "https://excalidraw.com";
   elements: ExcalidrawElement[];
-}
+};

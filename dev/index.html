@@ -6,9 +6,9 @@
       html {
         height: 100%;
         width: 100%;
-        font-family : Verdana, Geneva, sans-serif;
+        font-family: Verdana, Geneva, sans-serif;
       }
-      
+
       body {
         display: flex;
         flex-direction: column;
@@ -26,7 +26,7 @@
       }
 
       header > h1 {
-        padding: .5rem;
+        padding: 0.5rem;
       }
 
       main {
@@ -40,8 +40,8 @@
         flex-direction: column;
         align-content: center;
         flex: 1;
-        background-color: rgba(100, 149, 237, .3);
-        padding: .8rem;
+        background-color: rgba(100, 149, 237, 0.3);
+        padding: 0.8rem;
       }
 
       main > textarea {
@@ -52,11 +52,11 @@
         display: inline-block;
         cursor: pointer;
         margin: 1rem 0;
-        border-radius: .2rem;
+        border-radius: 0.2rem;
         background-color: #fff;
         border: 1px solid #333;
         color: #333;
-        padding: .5rem;
+        padding: 0.5rem;
       }
 
       #source {
@@ -65,7 +65,7 @@
 
       #result {
         margin: 1rem;
-        padding: .5rem;
+        padding: 0.5rem;
       }
     </style>
   </head>
@@ -86,11 +86,11 @@
       import svgParse from "../dist/esm-bundle.js";
 
       const fileSelector = document.getElementById("source");
-      const output = document.getElementById("result")
+      const output = document.getElementById("result");
 
       output.addEventListener("click", function (event) {
-        this.select()
-      })
+        this.select();
+      });
 
       fileSelector.addEventListener("change", (event) => {
         const fileList = event.target.files;
@@ -110,11 +110,7 @@
         reader.addEventListener("load", (event) => {
           const parsingResult = svgParse.parse(event.target.result);
 
-          output.value = JSON.stringify(
-            parsingResult,
-            null,
-            2,
-          );
+          output.value = JSON.stringify(parsingResult, null, 2);
         });
       }
     </script>
