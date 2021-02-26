@@ -1,9 +1,9 @@
 import { Coordinates } from "../../../types";
 import { safeNumber } from "../../../utils";
-import { cubicCurveToPoints } from "./bezier";
+import { curveToPoints } from "./bezier";
 
-const PATH_COMMANDS_REGEX = /(?:([MmLl](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([HhVv]-?\d+(?:\.\d+)?)|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|(z|Z))/g;
-const COMMAND_REGEX = /(?:[MmLlHhVvCcZz]|(-?\d+(?:\.\d+)?))/g;
+const PATH_COMMANDS_REGEX = /(?:([MmLl](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([HhVv]-?\d+(?:\.\d+)?)|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|([Qq](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){4})|(z|Z))/g;
+const COMMAND_REGEX = /(?:[MmLlHhVvCcQqZz]|(-?\d+(?:\.\d+)?))/g;
 
 /**
  * Convert a SVG path data to list of coordinates
@@ -113,7 +113,41 @@ const pathToPoints = (path: string): Coordinates[][] => {
 
           console.log("Control points:", controlPoints);
 
-          const coordinatesList = cubicCurveToPoints(controlPoints);
+          const coordinatesList = curveToPoints("cubic", controlPoints);
+
+          console.log("Curve coordinates:", coordinatesList);
+
+          coordinates.push(...coordinatesList);
+
+          currentPosition = coordinatesList[coordinatesList.length - 1];
+
+          break;
+        }
+        case "Q":
+        case "q": {
+          const controlPoints = [currentPosition];
+
+          if (isRelative) {
+            controlPoints.push(
+              [
+                currentPosition[0] + commandCoordinates[0],
+                currentPosition[1] + commandCoordinates[1],
+              ],
+              [
+                currentPosition[0] + commandCoordinates[2],
+                currentPosition[1] + commandCoordinates[3],
+              ],
+            );
+          } else {
+            controlPoints.push(
+              [commandCoordinates[0], commandCoordinates[1]],
+              [commandCoordinates[2], commandCoordinates[3]],
+            );
+          }
+
+          console.log("Control points:", controlPoints);
+
+          const coordinatesList = curveToPoints("quadratic", controlPoints);
 
           console.log("Curve coordinates:", coordinatesList);
 
