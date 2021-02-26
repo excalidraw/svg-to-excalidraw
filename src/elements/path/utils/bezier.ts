@@ -9,15 +9,16 @@ import { safeNumber } from "../../../utils";
 const getCoordinateOfCubicCurve = (
   controlCoordinates: Coordinates[],
   section: number,
-): Coordinates => Array.from({ length: 2 }).map((v, i) => {
-  const coordinates =
-    controlCoordinates[0][i] * (1 - section) ** 3 +
-    3 * controlCoordinates[1][i] * section * (1 - section) ** 2 +
-    3 * controlCoordinates[2][i] * section ** 2 * (1 - section) +
-    controlCoordinates[3][i] * section ** 3;
+): Coordinates =>
+  Array.from({ length: 2 }).map((v, i) => {
+    const coordinates =
+      controlCoordinates[0][i] * (1 - section) ** 3 +
+      3 * controlCoordinates[1][i] * section * (1 - section) ** 2 +
+      3 * controlCoordinates[2][i] * section ** 2 * (1 - section) +
+      controlCoordinates[3][i] * section ** 3;
 
-  return safeNumber(coordinates);
-});
+    return safeNumber(coordinates);
+  });
 
 /**
  * Get coordinates x,y of a point at a given section of a quadratic bezier curve.
@@ -27,14 +28,15 @@ const getCoordinateOfCubicCurve = (
 const getCoordinateOfQuadraticCurve = (
   controlCoordinates: Coordinates[],
   section: number,
-): Coordinates => Array.from({ length: 2 }).map((v, i) => {
-  const coordinates =
-    controlCoordinates[0][i] * (1 - section) ** 2 +
-    2 * controlCoordinates[1][i] * section * (1 - section) +
-    controlCoordinates[2][i] * section ** 2;
+): Coordinates =>
+  Array.from({ length: 2 }).map((v, i) => {
+    const coordinates =
+      controlCoordinates[0][i] * (1 - section) ** 2 +
+      2 * controlCoordinates[1][i] * section * (1 - section) +
+      controlCoordinates[2][i] * section ** 2;
 
-  return safeNumber(coordinates);
-})
+    return safeNumber(coordinates);
+  });
 
 /**
  * Get list of coordinates for a cubic bézier curve.
@@ -57,9 +59,9 @@ export const curveToPoints = (
     if (type === "cubic") {
       return getCoordinateOfCubicCurve(controlCoordinates, section);
     } else if (type === "quadratic") {
-      return getCoordinateOfQuadraticCurve(controlCoordinates, section)
+      return getCoordinateOfQuadraticCurve(controlCoordinates, section);
     }
 
-    throw new Error("Invalid bézier curve type requested")
+    throw new Error("Invalid bézier curve type requested");
   });
 };
