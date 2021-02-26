@@ -148,6 +148,10 @@ const pathToPoints = (path: string): Coordinates[][] => {
     console.groupEnd();
   }
 
+  if (elements.length === 0 && coordinates.length) {
+    elements.push(coordinates)
+  }
+
   return elements;
 };
 
