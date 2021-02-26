@@ -126,6 +126,12 @@ const pathToPoints = (path: string): Coordinates[][] => {
         case "Z":
         case "z":
           if (coordinates.length) {
+            const lastCoordinates = coordinates[coordinates.length - 1]
+
+            if (lastCoordinates[0] !== coordinates[0][0] || lastCoordinates[1] !== coordinates[0][1]) {
+              coordinates.push(coordinates[0])
+            }
+
             elements.push(coordinates);
           }
 
