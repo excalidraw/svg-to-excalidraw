@@ -6,17 +6,17 @@ import { safeNumber } from "../../../utils";
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
  */
 const getPointOfCubicCurve = (
-  controlCoordinates: number[][],
+  controlPoints: number[][],
   section: number,
 ): number[] =>
   Array.from({ length: 2 }).map((v, i) => {
-    const coordinates =
-      controlCoordinates[0][i] * (1 - section) ** 3 +
-      3 * controlCoordinates[1][i] * section * (1 - section) ** 2 +
-      3 * controlCoordinates[2][i] * section ** 2 * (1 - section) +
-      controlCoordinates[3][i] * section ** 3;
+    const point =
+      controlPoints[0][i] * (1 - section) ** 3 +
+      3 * controlPoints[1][i] * section * (1 - section) ** 2 +
+      3 * controlPoints[2][i] * section ** 2 * (1 - section) +
+      controlPoints[3][i] * section ** 3;
 
-    return safeNumber(coordinates);
+    return safeNumber(point);
   });
 
 /**
@@ -25,20 +25,20 @@ const getPointOfCubicCurve = (
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B%C3%A9zier_curves
  */
 const getPointOfQuadraticCurve = (
-  controlCoordinates: number[][],
+  controlPoints: number[][],
   section: number,
 ): number[] =>
   Array.from({ length: 2 }).map((v, i) => {
-    const coordinates =
-      controlCoordinates[0][i] * (1 - section) ** 2 +
-      2 * controlCoordinates[1][i] * section * (1 - section) +
-      controlCoordinates[2][i] * section ** 2;
+    const point =
+      controlPoints[0][i] * (1 - section) ** 2 +
+      2 * controlPoints[1][i] * section * (1 - section) +
+      controlPoints[2][i] * section ** 2;
 
-    return safeNumber(coordinates);
+    return safeNumber(point);
   });
 
 /**
- * Get list of coordinates for a cubic bézier curve.
+ * Get list of points for a cubic bézier curve.
  * Starting point is not returned
  */
 export const curveToPoints = (

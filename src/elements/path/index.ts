@@ -16,16 +16,16 @@ const parse = (node: Element) => {
 
 export const convert = (node: Element): RawElement[] => {
   const { data, backgroundColor, strokeColor } = parse(node);
-  const elementsCoordinates = pathToPoints(data);
+  const elementsPoints = pathToPoints(data);
 
-  console.log("Points:", elementsCoordinates);
+  console.log("Points:", elementsPoints);
 
-  return elementsCoordinates.map((coordinates) => {
-    const boundaries = getElementBoundaries(coordinates);
+  return elementsPoints.map((points) => {
+    const boundaries = getElementBoundaries(points);
 
     return {
       type: "draw",
-      points: coordinates,
+      points,
       backgroundColor,
       strokeColor,
       ...boundaries,

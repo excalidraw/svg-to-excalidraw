@@ -129,7 +129,7 @@ const handleQuadraticCurveTo = (
 };
 
 /**
- * Convert a SVG path data to list of coordinates
+ * Convert a SVG path data to list of points
  */
 const pathToPoints = (path: string): number[][][] => {
   const commands = path.match(PATH_COMMANDS_REGEX);
@@ -158,7 +158,7 @@ const pathToPoints = (path: string): number[][][] => {
       const commandType = commandMatch[0];
       const parameters = commandMatch
         .slice(1, commandMatch.length)
-        .map((coordinate) => safeNumber(Number(coordinate)));
+        .map((parameter) => safeNumber(Number(parameter)));
       const isRelative = commandType.toLowerCase() === commandType;
 
       commandsHistory.push({

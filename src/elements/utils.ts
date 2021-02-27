@@ -1,9 +1,9 @@
 import { ElementBoundaries } from "../types";
 
 export const getElementBoundaries = (
-  coordinates: number[][],
+  points: number[][],
 ): ElementBoundaries => {
-  const { x, y } = coordinates.reduce(
+  const { x, y } = points.reduce(
     (boundaries, [x, y]) => {
       if (x < boundaries.x.min) boundaries.x.min = x;
       if (x > boundaries.x.max) boundaries.x.max = x;
