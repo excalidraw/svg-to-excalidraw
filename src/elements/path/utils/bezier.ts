@@ -1,15 +1,14 @@
-import { Coordinates } from "../../../types";
 import { safeNumber } from "../../../utils";
 
 /**
- * Get coordinates x,y of a point at a given section of a cubic bezier curve.
+ * Get a point at a given section of a cubic bezier curve.
  * This function only supports two dimensions curves
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
  */
-const getCoordinateOfCubicCurve = (
-  controlCoordinates: Coordinates[],
+const getPointOfCubicCurve = (
+  controlCoordinates: number[][],
   section: number,
-): Coordinates =>
+): number[] =>
   Array.from({ length: 2 }).map((v, i) => {
     const coordinates =
       controlCoordinates[0][i] * (1 - section) ** 3 +
@@ -21,14 +20,14 @@ const getCoordinateOfCubicCurve = (
   });
 
 /**
- * Get coordinates x,y of a point at a given section of a quadratic bezier curve.
+ * Get a point at a given section of a quadratic bezier curve.
  * This function only supports two dimensions curves
  * @see https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B%C3%A9zier_curves
  */
-const getCoordinateOfQuadraticCurve = (
-  controlCoordinates: Coordinates[],
+const getPointOfQuadraticCurve = (
+  controlCoordinates: number[][],
   section: number,
-): Coordinates =>
+): number[] =>
   Array.from({ length: 2 }).map((v, i) => {
     const coordinates =
       controlCoordinates[0][i] * (1 - section) ** 2 +
@@ -44,22 +43,22 @@ const getCoordinateOfQuadraticCurve = (
  */
 export const curveToPoints = (
   type: "cubic" | "quadratic",
-  controlCoordinates: Coordinates[],
-  nbCoordinates = 10,
-): Coordinates[] => {
-  if (nbCoordinates <= 0) {
-    throw new Error("nbCoordinates must be positive");
-  } else if (nbCoordinates > 100) {
-    nbCoordinates = 100;
+  controlPoints: number[][],
+  nbPoints = 10,
+): number[][] => {
+  if (nbPoints <= 0) {
+    throw new Error("Requested amount of points must be positive");
+  } else if (nbPoints > 100) {
+    nbPoints = 100;
   }
 
-  return Array.from({ length: nbCoordinates }, (value, index) => {
-    const section = safeNumber(((100 / nbCoordinates) * (index + 1)) / 100);
+  return Array.from({ length: nbPoints }, (value, index) => {
+    const section = safeNumber(((100 / nbPoints) * (index + 1)) / 100);
 
     if (type === "cubic") {
-      return getCoordinateOfCubicCurve(controlCoordinates, section);
+      return getPointOfCubicCurve(controlPoints, section);
     } else if (type === "quadratic") {
-      return getCoordinateOfQuadraticCurve(controlCoordinates, section);
+      return getPointOfQuadraticCurve(controlPoints, section);
     }
 
     throw new Error("Invalid bézier curve type requested");

@@ -8,7 +8,7 @@ const COMMAND_REGEX = /(?:[MmLlHhVvCcSsQqTtZz]|(-?\d+(?:\.\d+)?))/g;
 /**
  * Convert a SVG path data to list of coordinates
  */
-const pathToPoints = (path: string): Coordinates[][] => {
+const pathToPoints = (path: string): number[][][] => {
   const commands = path.match(PATH_COMMANDS_REGEX);
   const elements = [];
   const commandsHistory = [];

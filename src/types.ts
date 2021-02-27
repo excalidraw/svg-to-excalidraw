@@ -14,8 +14,6 @@ export type ElementBoundaries = {
   width: number;
 };
 
-export type Coordinates = number[];
-
 export type ExcalidrawElement = RawElement & {
   angle: number;
   fillStyle: string;
