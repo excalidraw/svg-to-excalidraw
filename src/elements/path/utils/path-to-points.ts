@@ -19,6 +19,8 @@ const pathToPoints = (path: string): Coordinates[][] => {
     throw new Error("No commands found in given path");
   }
 
+  console.log("Commands:", commands);
+
   for (const command of commands) {
     console.groupCollapsed(command);
 
@@ -37,7 +39,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
         relative: isRelative,
       });
 
-      console.log("Commande type:", commandType);
+      console.log("Command type:", commandType);
       console.log("Coordinates:", commandCoordinates);
 
       switch (commandType) {
