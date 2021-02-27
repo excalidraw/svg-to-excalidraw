@@ -2,8 +2,8 @@ import { Coordinates } from "../../../types";
 import { safeNumber } from "../../../utils";
 import { curveToPoints } from "./bezier";
 
-const PATH_COMMANDS_REGEX = /(?:([MmLl](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([HhVv]-?\d+(?:\.\d+)?)|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|([Qq](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){4})|(z|Z))/g;
-const COMMAND_REGEX = /(?:[MmLlHhVvCcQqZz]|(-?\d+(?:\.\d+)?))/g;
+const PATH_COMMANDS_REGEX = /(?:([MmLlTt](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([HhVv]-?\d+(?:\.\d+)?)|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|([Qq](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){4})|(z|Z))/g;
+const COMMAND_REGEX = /(?:[MmLlHhVvCcQqTtZz]|(-?\d+(?:\.\d+)?))/g;
 
 /**
  * Convert a SVG path data to list of coordinates
@@ -11,6 +11,7 @@ const COMMAND_REGEX = /(?:[MmLlHhVvCcQqZz]|(-?\d+(?:\.\d+)?))/g;
 const pathToPoints = (path: string): Coordinates[][] => {
   const commands = path.match(PATH_COMMANDS_REGEX);
   const elements = [];
+  const commandsHistory = [];
   let currentPosition = [0, 0];
   let coordinates = [];
 
@@ -29,6 +30,12 @@ const pathToPoints = (path: string): Coordinates[][] => {
         .slice(1, commandMatch.length)
         .map((coordinate) => safeNumber(Number(coordinate)));
       const isRelative = commandType.toLowerCase() === commandType;
+
+      commandsHistory.push({
+        type: commandType,
+        coordinates: commandCoordinates,
+        relative: isRelative,
+      })
 
       console.log("Commande type:", commandType);
       console.log("Coordinates:", commandCoordinates);
@@ -124,15 +131,51 @@ const pathToPoints = (path: string): Coordinates[][] => {
           break;
         }
         case "Q":
-        case "q": {
+        case "q":
+        case "T":
+        case "t": {
           const controlPoints = [currentPosition];
+          const isSimpleForm = ["T", "t"].includes(commandType)
+
+          if (isSimpleForm) {
+            const lastCommand = commandsHistory[commandsHistory.length - 2]
+
+            console.log('Last command:', lastCommand)
+
+            if (['Q', 'q'].includes(lastCommand.type)) {
+              commandCoordinates = [
+                currentPosition[0] - (lastCommand.coordinates[0] - currentPosition[0]),
+                currentPosition[1] - (lastCommand.coordinates[1] - currentPosition[1]),
+                commandCoordinates[0],
+                commandCoordinates[1],
+              ]
+            } else {
+              commandCoordinates = [
+                ...currentPosition,
+                commandCoordinates[0],
+                commandCoordinates[1],
+              ]
+            }
+          }
 
           if (isRelative) {
+            if (isSimpleForm) {
+              controlPoints.push(
+                [
+                  commandCoordinates[0],
+                  commandCoordinates[1],
+                ],
+              )
+            } else {
+              controlPoints.push(
+                [
+                  currentPosition[0] + commandCoordinates[0],
+                  currentPosition[1] + commandCoordinates[1],
+                ]
+              )
+            }
+
             controlPoints.push(
-              [
-                currentPosition[0] + commandCoordinates[0],
-                currentPosition[1] + commandCoordinates[1],
-              ],
               [
                 currentPosition[0] + commandCoordinates[2],
                 currentPosition[1] + commandCoordinates[3],
