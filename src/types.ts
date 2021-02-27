@@ -1,3 +1,9 @@
+export type PathCommand = {
+  type: string;
+  parameters: number[];
+  isRelative: boolean;
+};
+
 export type RawElement = {
   type: string;
   x: number;

@@ -1,9 +1,132 @@
-import { Coordinates } from "../../../types";
+import { PathCommand } from "../../../types";
 import { safeNumber } from "../../../utils";
 import { curveToPoints } from "./bezier";
 
 const PATH_COMMANDS_REGEX = /(?:([HhVv] *-?\d+(?:\.\d+)?)|([MmLlTt](?: *-?\d+(?:\.\d+)?(?:,| *)?){2})|([Cc](?: *-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| *)?){6})|([QqSs](?: *-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| *)?){4})|(z|Z))/g;
 const COMMAND_REGEX = /(?:[MmLlHhVvCcSsQqTtZz]|(-?\d+(?:\.\d+)?))/g;
+
+const handleMoveToAndLineTo = (
+  currentPosition: number[],
+  parameters: number[],
+  isRelative: boolean,
+): number[] => {
+  if (isRelative) {
+    return [
+      currentPosition[0] + parameters[0],
+      currentPosition[1] + parameters[1],
+    ];
+  }
+
+  return parameters;
+};
+
+const handleHorizontalLineTo = (
+  currentPosition: number[],
+  x: number,
+  isRelative: boolean,
+): number[] => {
+  if (isRelative) {
+    return [currentPosition[0] + x, currentPosition[1]];
+  }
+
+  return [x, currentPosition[1]];
+};
+
+const handleVerticalLineTo = (
+  currentPosition: number[],
+  y: number,
+  isRelative: boolean,
+): number[] => {
+  if (isRelative) {
+    return [currentPosition[0], currentPosition[1] + y];
+  }
+
+  return [currentPosition[0], y];
+};
+
+const handleCubicCurveTo = (
+  currentPosition: number[],
+  parameters: number[],
+  lastCommand: PathCommand,
+  isSimpleForm: boolean,
+  isRelative: boolean,
+): number[][] => {
+  const controlPoints = [currentPosition];
+  let inferredControlPoint;
+
+  if (isSimpleForm) {
+    console.log("Last command:", lastCommand);
+
+    inferredControlPoint = ["C", "c"].includes(lastCommand?.type)
+      ? [
+        currentPosition[0] - (lastCommand.parameters[2] - currentPosition[0]),
+        currentPosition[1] - (lastCommand.parameters[3] - currentPosition[1]),
+      ]
+      : currentPosition;
+  }
+
+  if (isRelative) {
+    controlPoints.push(
+      inferredControlPoint || [
+        currentPosition[0] + parameters[0],
+        currentPosition[1] + parameters[1],
+      ],
+      [currentPosition[0] + parameters[2], currentPosition[1] + parameters[3]],
+      [currentPosition[0] + parameters[4], currentPosition[1] + parameters[5]],
+    );
+  } else {
+    controlPoints.push(
+      inferredControlPoint || [parameters[0], parameters[1]],
+      [parameters[2], parameters[3]],
+      [parameters[4], parameters[5]],
+    );
+  }
+
+  console.log("Control points:", controlPoints);
+
+  return curveToPoints("cubic", controlPoints);
+};
+
+const handleQuadraticCurveTo = (
+  currentPosition: number[],
+  parameters: number[],
+  lastCommand: PathCommand,
+  isSimpleForm: boolean,
+  isRelative: boolean,
+): number[][] => {
+  const controlPoints = [currentPosition];
+  let inferredControlPoint;
+
+  if (isSimpleForm) {
+    console.log("Last command:", lastCommand);
+
+    inferredControlPoint = ["Q", "q"].includes(lastCommand?.type)
+      ? [
+        currentPosition[0] - (lastCommand.parameters[0] - currentPosition[0]),
+        currentPosition[1] - (lastCommand.parameters[1] - currentPosition[1]),
+      ]
+      : currentPosition;
+  }
+
+  if (isRelative) {
+    controlPoints.push(
+      inferredControlPoint || [
+        currentPosition[0] + parameters[0],
+        currentPosition[1] + parameters[1],
+      ],
+      [currentPosition[0] + parameters[2], currentPosition[1] + parameters[3]],
+    );
+  } else {
+    controlPoints.push(inferredControlPoint || [parameters[0], parameters[1]], [
+      parameters[2],
+      parameters[3],
+    ]);
+  }
+
+  console.log("Control points:", controlPoints);
+
+  return curveToPoints("quadratic", controlPoints);
+};
 
 /**
  * Convert a SVG path data to list of coordinates
@@ -13,7 +136,7 @@ const pathToPoints = (path: string): number[][][] => {
   const elements = [];
   const commandsHistory = [];
   let currentPosition = [0, 0];
-  let coordinates = [];
+  let points = [];
 
   if (!commands?.length) {
     throw new Error("No commands found in given path");
@@ -24,234 +147,97 @@ const pathToPoints = (path: string): number[][][] => {
   for (const command of commands) {
     console.groupCollapsed(command);
 
+    const lastCommand = commandsHistory[commandsHistory.length - 2];
     const commandMatch = command.match(COMMAND_REGEX);
+
+    currentPosition = points[points.length - 1] || currentPosition;
+
+    console.log("Current position:", currentPosition);
 
     if (commandMatch?.length) {
       const commandType = commandMatch[0];
-      let commandCoordinates = commandMatch
+      const parameters = commandMatch
         .slice(1, commandMatch.length)
         .map((coordinate) => safeNumber(Number(coordinate)));
       const isRelative = commandType.toLowerCase() === commandType;
 
       commandsHistory.push({
         type: commandType,
-        coordinates: commandCoordinates,
-        relative: isRelative,
+        parameters,
+        isRelative,
       });
 
       console.log("Command type:", commandType);
-      console.log("Coordinates:", commandCoordinates);
+      console.log("Parameters:", parameters);
 
       switch (commandType) {
         case "M":
         case "m":
         case "L":
         case "l":
-          if (isRelative) {
-            commandCoordinates = [
-              currentPosition[0] + commandCoordinates[0],
-              currentPosition[1] + commandCoordinates[1],
-            ];
-          }
-
-          coordinates.push(commandCoordinates);
-
-          currentPosition = commandCoordinates;
+          points.push(
+            handleMoveToAndLineTo(currentPosition, parameters, isRelative),
+          );
 
           break;
         case "H":
-        case "h": {
-          let targetCoordinate = [commandCoordinates[0], currentPosition[1]];
-
-          if (isRelative) {
-            targetCoordinate = [
-              currentPosition[0] + commandCoordinates[0],
-              currentPosition[1],
-            ];
-          }
-
-          coordinates.push(targetCoordinate);
-
-          currentPosition = targetCoordinate;
+        case "h":
+          points.push(
+            handleHorizontalLineTo(currentPosition, parameters[0], isRelative),
+          );
 
           break;
-        }
         case "V":
-        case "v": {
-          let targetCoordinate = [currentPosition[0], commandCoordinates[0]];
-
-          if (isRelative) {
-            targetCoordinate = [
-              currentPosition[0],
-              currentPosition[1] + commandCoordinates[0],
-            ];
-          }
-
-          coordinates.push(targetCoordinate);
-
-          currentPosition = targetCoordinate;
+        case "v":
+          points.push(
+            handleVerticalLineTo(currentPosition, parameters[0], isRelative),
+          );
 
           break;
-        }
         case "C":
         case "c":
         case "S":
-        case "s": {
-          const controlPoints = [currentPosition];
-          const isSimpleForm = ["S", "s"].includes(commandType);
-
-          if (isSimpleForm) {
-            const lastCommand = commandsHistory[commandsHistory.length - 2];
-
-            console.log("Last command:", lastCommand);
-
-            if (["C", "c"].includes(lastCommand.type)) {
-              commandCoordinates = [
-                currentPosition[0] -
-                  (lastCommand.coordinates[2] - currentPosition[0]),
-                currentPosition[1] -
-                  (lastCommand.coordinates[3] - currentPosition[1]),
-                commandCoordinates[0],
-                commandCoordinates[1],
-                commandCoordinates[2],
-                commandCoordinates[3],
-              ];
-            } else {
-              commandCoordinates = [
-                ...currentPosition,
-                commandCoordinates[0],
-                commandCoordinates[1],
-                commandCoordinates[2],
-                commandCoordinates[3],
-              ];
-            }
-          }
-
-          if (isRelative) {
-            if (isSimpleForm) {
-              controlPoints.push([
-                commandCoordinates[0],
-                commandCoordinates[1],
-              ]);
-            } else {
-              controlPoints.push([
-                currentPosition[0] + commandCoordinates[0],
-                currentPosition[1] + commandCoordinates[1],
-              ]);
-            }
-
-            controlPoints.push(
-              [
-                currentPosition[0] + commandCoordinates[2],
-                currentPosition[1] + commandCoordinates[3],
-              ],
-              [
-                currentPosition[0] + commandCoordinates[4],
-                currentPosition[1] + commandCoordinates[5],
-              ],
-            );
-          } else {
-            controlPoints.push(
-              [commandCoordinates[0], commandCoordinates[1]],
-              [commandCoordinates[2], commandCoordinates[3]],
-              [commandCoordinates[4], commandCoordinates[5]],
-            );
-          }
-
-          console.log("Control points:", controlPoints);
-
-          const coordinatesList = curveToPoints("cubic", controlPoints);
-
-          console.log("Curve coordinates:", coordinatesList);
-
-          coordinates.push(...coordinatesList);
-
-          currentPosition = coordinatesList[coordinatesList.length - 1];
+        case "s":
+          points.push(
+            ...handleCubicCurveTo(
+              currentPosition,
+              parameters,
+              lastCommand,
+              ["S", "s"].includes(commandType),
+              isRelative,
+            ),
+          );
 
           break;
-        }
         case "Q":
         case "q":
         case "T":
-        case "t": {
-          const controlPoints = [currentPosition];
-          const isSimpleForm = ["T", "t"].includes(commandType);
-
-          if (isSimpleForm) {
-            const lastCommand = commandsHistory[commandsHistory.length - 2];
-
-            console.log("Last command:", lastCommand);
-
-            if (["Q", "q"].includes(lastCommand.type)) {
-              commandCoordinates = [
-                currentPosition[0] -
-                  (lastCommand.coordinates[0] - currentPosition[0]),
-                currentPosition[1] -
-                  (lastCommand.coordinates[1] - currentPosition[1]),
-                commandCoordinates[0],
-                commandCoordinates[1],
-              ];
-            } else {
-              commandCoordinates = [
-                ...currentPosition,
-                commandCoordinates[0],
-                commandCoordinates[1],
-              ];
-            }
-          }
-
-          if (isRelative) {
-            if (isSimpleForm) {
-              controlPoints.push([
-                commandCoordinates[0],
-                commandCoordinates[1],
-              ]);
-            } else {
-              controlPoints.push([
-                currentPosition[0] + commandCoordinates[0],
-                currentPosition[1] + commandCoordinates[1],
-              ]);
-            }
-
-            controlPoints.push([
-              currentPosition[0] + commandCoordinates[2],
-              currentPosition[1] + commandCoordinates[3],
-            ]);
-          } else {
-            controlPoints.push(
-              [commandCoordinates[0], commandCoordinates[1]],
-              [commandCoordinates[2], commandCoordinates[3]],
-            );
-          }
-
-          console.log("Control points:", controlPoints);
-
-          const coordinatesList = curveToPoints("quadratic", controlPoints);
-
-          console.log("Curve coordinates:", coordinatesList);
-
-          coordinates.push(...coordinatesList);
-
-          currentPosition = coordinatesList[coordinatesList.length - 1];
+        case "t":
+          points.push(
+            ...handleQuadraticCurveTo(
+              currentPosition,
+              parameters,
+              lastCommand,
+              ["T", "t"].includes(commandType),
+              isRelative,
+            ),
+          );
 
           break;
-        }
         case "Z":
         case "z":
-          if (coordinates.length) {
-            const lastCoordinates = coordinates[coordinates.length - 1];
-
+          if (points.length) {
             if (
-              lastCoordinates[0] !== coordinates[0][0] ||
-              lastCoordinates[1] !== coordinates[0][1]
+              currentPosition[0] !== points[0][0] ||
+              currentPosition[1] !== points[0][1]
             ) {
-              coordinates.push(coordinates[0]);
+              points.push(points[0]);
             }
 
-            elements.push(coordinates);
+            elements.push(points);
           }
 
-          coordinates = [];
+          points = [];
 
           break;
       }
@@ -259,13 +245,11 @@ const pathToPoints = (path: string): number[][][] => {
       console.error("Unsupported command provided will be ignored:", command);
     }
 
-    console.log("Current position:", currentPosition);
-    console.log("Last point:", coordinates[coordinates.length - 1]);
     console.groupEnd();
   }
 
-  if (elements.length === 0 && coordinates.length) {
-    elements.push(coordinates);
+  if (elements.length === 0 && points.length) {
+    elements.push(points);
   }
 
   return elements;
