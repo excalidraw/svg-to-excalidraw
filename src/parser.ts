@@ -119,10 +119,8 @@ const handleElements = (nodeList: Element[]): ExcalidrawScene => {
       seed: Math.floor(
         Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000,
       ),
-      strokeColor: "#000000",
       strokeSharpness: "sharp",
       strokeWidth: 1,
-      backgroundColor: "transparent",
       ...element,
     })),
   };

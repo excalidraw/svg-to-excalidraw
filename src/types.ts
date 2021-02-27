@@ -11,6 +11,8 @@ export type RawElement = {
   width: number;
   height: number;
   points: number[][];
+  backgroundColor: string;
+  strokeColor: string;
 };
 
 export type ElementBoundaries = {
@@ -26,10 +28,8 @@ export type ExcalidrawElement = RawElement & {
   opacity: number;
   roughness: number;
   seed: number;
-  strokeColor: string;
   strokeSharpness: string;
   strokeWidth: number;
-  backgroundColor: string;
 };
 
 export type ExcalidrawScene = {
