@@ -35,7 +35,7 @@ const pathToPoints = (path: string): Coordinates[][] => {
         type: commandType,
         coordinates: commandCoordinates,
         relative: isRelative,
-      })
+      });
 
       console.log("Commande type:", commandType);
       console.log("Coordinates:", commandCoordinates);
@@ -173,52 +173,48 @@ const pathToPoints = (path: string): Coordinates[][] => {
         case "T":
         case "t": {
           const controlPoints = [currentPosition];
-          const isSimpleForm = ["T", "t"].includes(commandType)
+          const isSimpleForm = ["T", "t"].includes(commandType);
 
           if (isSimpleForm) {
-            const lastCommand = commandsHistory[commandsHistory.length - 2]
+            const lastCommand = commandsHistory[commandsHistory.length - 2];
 
-            console.log('Last command:', lastCommand)
+            console.log("Last command:", lastCommand);
 
-            if (['Q', 'q'].includes(lastCommand.type)) {
+            if (["Q", "q"].includes(lastCommand.type)) {
               commandCoordinates = [
-                currentPosition[0] - (lastCommand.coordinates[0] - currentPosition[0]),
-                currentPosition[1] - (lastCommand.coordinates[1] - currentPosition[1]),
+                currentPosition[0] -
+                  (lastCommand.coordinates[0] - currentPosition[0]),
+                currentPosition[1] -
+                  (lastCommand.coordinates[1] - currentPosition[1]),
                 commandCoordinates[0],
                 commandCoordinates[1],
-              ]
+              ];
             } else {
               commandCoordinates = [
                 ...currentPosition,
                 commandCoordinates[0],
                 commandCoordinates[1],
-              ]
+              ];
             }
           }
 
           if (isRelative) {
             if (isSimpleForm) {
-              controlPoints.push(
-                [
-                  commandCoordinates[0],
-                  commandCoordinates[1],
-                ],
-              )
+              controlPoints.push([
+                commandCoordinates[0],
+                commandCoordinates[1],
+              ]);
             } else {
-              controlPoints.push(
-                [
-                  currentPosition[0] + commandCoordinates[0],
-                  currentPosition[1] + commandCoordinates[1],
-                ]
-              )
+              controlPoints.push([
+                currentPosition[0] + commandCoordinates[0],
+                currentPosition[1] + commandCoordinates[1],
+              ]);
             }
 
-            controlPoints.push(
-              [
-                currentPosition[0] + commandCoordinates[2],
-                currentPosition[1] + commandCoordinates[3],
-              ],
-            );
+            controlPoints.push([
+              currentPosition[0] + commandCoordinates[2],
+              currentPosition[1] + commandCoordinates[3],
+            ]);
           } else {
             controlPoints.push(
               [commandCoordinates[0], commandCoordinates[1]],
