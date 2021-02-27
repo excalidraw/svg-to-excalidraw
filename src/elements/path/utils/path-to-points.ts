@@ -2,8 +2,8 @@ import { Coordinates } from "../../../types";
 import { safeNumber } from "../../../utils";
 import { curveToPoints } from "./bezier";
 
-const PATH_COMMANDS_REGEX = /(?:([MmLlTt](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([HhVv]-?\d+(?:\.\d+)?)|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|([Qq](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){4})|(z|Z))/g;
-const COMMAND_REGEX = /(?:[MmLlHhVvCcQqTtZz]|(-?\d+(?:\.\d+)?))/g;
+const PATH_COMMANDS_REGEX = /(?:([HhVv]-?\d+(?:\.\d+)?)|([MmLlTt](?:-?\d+(?:\.\d+)?(?:,| )?){2})|([Ss](?:-?\d+(?:\.\d+)?(?:,| )?){4})|([Cc](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){6})|([Qq](?:-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| )?){4})|(z|Z))/g;
+const COMMAND_REGEX = /(?:[MmLlHhVvCcSsQqTtZz]|(-?\d+(?:\.\d+)?))/g;
 
 /**
  * Convert a SVG path data to list of coordinates
@@ -92,15 +92,53 @@ const pathToPoints = (path: string): Coordinates[][] => {
           break;
         }
         case "C":
-        case "c": {
+        case "c":
+        case "S":
+        case "s": {
           const controlPoints = [currentPosition];
+          const isSimpleForm = ["S", "s"].includes(commandType);
+
+          if (isSimpleForm) {
+            const lastCommand = commandsHistory[commandsHistory.length - 2];
+
+            console.log("Last command:", lastCommand);
+
+            if (["C", "c"].includes(lastCommand.type)) {
+              commandCoordinates = [
+                currentPosition[0] -
+                  (lastCommand.coordinates[2] - currentPosition[0]),
+                currentPosition[1] -
+                  (lastCommand.coordinates[3] - currentPosition[1]),
+                commandCoordinates[0],
+                commandCoordinates[1],
+                commandCoordinates[2],
+                commandCoordinates[3],
+              ];
+            } else {
+              commandCoordinates = [
+                ...currentPosition,
+                commandCoordinates[0],
+                commandCoordinates[1],
+                commandCoordinates[2],
+                commandCoordinates[3],
+              ];
+            }
+          }
 
           if (isRelative) {
-            controlPoints.push(
-              [
+            if (isSimpleForm) {
+              controlPoints.push([
+                commandCoordinates[0],
+                commandCoordinates[1],
+              ]);
+            } else {
+              controlPoints.push([
                 currentPosition[0] + commandCoordinates[0],
                 currentPosition[1] + commandCoordinates[1],
-              ],
+              ]);
+            }
+
+            controlPoints.push(
               [
                 currentPosition[0] + commandCoordinates[2],
                 currentPosition[1] + commandCoordinates[3],
