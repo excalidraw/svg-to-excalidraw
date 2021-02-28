@@ -18,16 +18,16 @@
     "no-negated-in-lhs": "error",
     "no-obj-calls": "error",
     "no-sparse-arrays": "error",
-    "use-isnan": "warn",
+    "use-isnan": "error",
     "valid-typeof": "error",
-    "no-with": "warn",
-    "wrap-iife": "warn",
-    "yoda": ["warn", "never"],
-    "no-delete-var": "warn",
-    "no-label-var": "warn",
+    "no-with": "error",
+    "wrap-iife": "error",
+    "yoda": ["error", "never"],
+    "no-delete-var": "error",
+    "no-label-var": "error",
     "no-shadow-restricted-names": "error",
-    "no-undef-init": "warn",
-    "no-undef": "warn",
-    "no-undefined": "warn"
+    "no-undef-init": "error",
+    "no-undef": "error",
+    "no-undefined": "error"
   }
 }
