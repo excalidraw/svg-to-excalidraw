@@ -23,7 +23,6 @@
     "no-func-assign": "error",
     "no-inner-declarations": "off",
     "no-invalid-regexp": "error",
-    "no-irregular-whitespace": "error",
     "no-negated-in-lhs": "error",
     "no-obj-calls": "error",
     "no-reserved-keys": "off",
