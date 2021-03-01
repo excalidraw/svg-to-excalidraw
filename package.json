@@ -41,7 +41,7 @@
   ],
   "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme",
   "devDependencies": {
-    "@babel/core": "7.12.17",
+    "@babel/core": "7.13.8",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-object-rest-spread": "7.12.13",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
