@@ -59,9 +59,9 @@ const handleCubicCurveTo = (
 
     inferredControlPoint = ["C", "c"].includes(lastCommand?.type)
       ? [
-        currentPosition[0] - (lastCommand.parameters[2] - currentPosition[0]),
-        currentPosition[1] - (lastCommand.parameters[3] - currentPosition[1]),
-      ]
+          currentPosition[0] - (lastCommand.parameters[2] - currentPosition[0]),
+          currentPosition[1] - (lastCommand.parameters[3] - currentPosition[1]),
+        ]
       : currentPosition;
   }
 
@@ -102,9 +102,9 @@ const handleQuadraticCurveTo = (
 
     inferredControlPoint = ["Q", "q"].includes(lastCommand?.type)
       ? [
-        currentPosition[0] - (lastCommand.parameters[0] - currentPosition[0]),
-        currentPosition[1] - (lastCommand.parameters[1] - currentPosition[1]),
-      ]
+          currentPosition[0] - (lastCommand.parameters[0] - currentPosition[0]),
+          currentPosition[1] - (lastCommand.parameters[1] - currentPosition[1]),
+        ]
       : currentPosition;
   }
 

@@ -56,8 +56,12 @@ const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
 const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
   const { x: minX, y: minY } = elements.reduce(
     (minPoint, { x, y }) => {
-      if (x < minPoint.x) minPoint.x = x;
-      if (y < minPoint.y) minPoint.y = y;
+      if (x < minPoint.x) {
+        minPoint.x = x;
+      }
+      if (y < minPoint.y) {
+        minPoint.y = y;
+      }
 
       return minPoint;
     },
