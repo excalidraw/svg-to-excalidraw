@@ -46,5 +46,8 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@excalidraw/eslint-config": "^0.0.12-beta"
   }
 }

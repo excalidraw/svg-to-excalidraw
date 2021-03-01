@@ -5,29 +5,5 @@
     "es2021": true,
     "node": true
   },
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["prettier", "@typescript-eslint"],
-  "extends": ["prettier"],
-  "rules": {
-    "no-dupe-args": "error",
-    "no-duplicate-case": "error",
-    "no-ex-assign": "error",
-    "no-extra-semi": "error",
-    "no-func-assign": "error",
-    "no-invalid-regexp": "error",
-    "no-negated-in-lhs": "error",
-    "no-obj-calls": "error",
-    "no-sparse-arrays": "error",
-    "use-isnan": "error",
-    "valid-typeof": "error",
-    "no-with": "error",
-    "wrap-iife": "error",
-    "yoda": ["error", "never"],
-    "no-delete-var": "error",
-    "no-label-var": "error",
-    "no-shadow-restricted-names": "error",
-    "no-undef-init": "error",
-    "no-undef": "error",
-    "no-undefined": "error"
-  }
+  "extends": "@excalidraw/eslint-config"
 }
