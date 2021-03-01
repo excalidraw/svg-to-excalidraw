@@ -1,57 +1,14 @@
 import elementsConverter from "./elements";
-import { RawElement, ExcalidrawScene } from "./types";
+import { RawElement } from "./types";
 import { safeNumber } from "./utils";
+import ExcalidrawScene from "./elements/ExcalidrawScene";
+import ExcalidrawEllipse from "./elements/ExcalidrawEllipse";
+import ExcalidrawPath from "./elements/ExcalidrawPath";
+import ExcalidrawLine from './elements/ExcalidrawLine';
+import Group, { getGroupAttrs } from "./elements/Group";
+import ExcalidrawRectangle from "./elements/ExcalidrawRectangle";
 
-const SUPPORTED_TAGS = ["svg", "path"];
-
-/**
- * Get a DOM representation of a SVG file content
- * @todo Handle parsing errors
- * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
- */
-const getDOMFromString = (svgString: string): XMLDocument => {
-  const parser = new DOMParser();
-  const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
-
-  console.debug("Parsed DOM:", svgDOM);
-
-  return svgDOM;
-};
-
-/**
- * Validate a node given by TreeWalker iteration algorithm
- * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
- */
-const nodeValidator = (node: Element): number => {
-  if (SUPPORTED_TAGS.includes(node.tagName)) {
-    console.debug("Allowing node:", node.tagName);
-
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
-  console.debug("Rejecting node:", node.tagName || node.nodeName);
-
-  return NodeFilter.FILTER_REJECT;
-};
-
-const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
-  const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
-    acceptNode: nodeValidator,
-  });
-  const nodeList: Element[] = [];
-  let currentNode = true;
-
-  while (currentNode) {
-    if (currentNode !== true) {
-      nodeList.push(currentNode);
-    }
-
-    // @ts-ignore // will update in a bit.
-    currentNode = treeWalker.nextNode();
-  }
-
-  return nodeList;
-};
+const SUPPORTED_TAGS = ["svg", "path", "g", "circle", 'ellipse', 'rect', 'polyline'];
 
 const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
   const { x: minX, y: minY } = elements.reduce(
@@ -83,59 +40,194 @@ const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
   });
 };
 
-const handleElements = (nodeList: Element[]): ExcalidrawScene => {
-  const elements = [];
+const nodeValidator = (node: Element): number => {
+  if (SUPPORTED_TAGS.includes(node.tagName)) {
+    console.debug("Allowing node:", node.tagName);
 
-  for (const node of nodeList) {
-    switch (node.nodeName) {
-      case "svg": {
-        const viewBox = node.getAttribute("viewBox");
+    return NodeFilter.FILTER_ACCEPT;
+  }
 
-        console.log("Viewbox:", viewBox);
+  console.debug("Rejecting node:", node.tagName || node.nodeName);
 
-        break;
-      }
-      case "path": {
-        const pathElements = elementsConverter.path.convert(node);
+  return NodeFilter.FILTER_REJECT;
+};
 
-        if (pathElements.length) {
-          elements.push(...pathElements);
-        }
+function createTreeWalker(dom: Node): TreeWalker {
+  return document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
+    acceptNode: nodeValidator,
+  });
+}
 
-        break;
-      }
-    }
+type WalkerArgs = {
+  tw: TreeWalker;
+  scene: ExcalidrawScene;
+  groups: Group[];
+};
+
+function attrOr<D>(el: Element, attr: string, backup: D): D {
+  return el.hasAttribute(attr) ? el.getAttribute(attr) as unknown as D : backup;
+}
+
+
+// Need to support as manya of these as possible...
+// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation
+function getPresentationAttrs(el: Element): any {
+  /*
+  stroke: stroke, stroke-opacity (via RRGGBBAA), stroke-width
+  fill: fill, fill-opacity (via RRGGBBAA)
+  */
+} 
+
+function walkEllipse(args: WalkerArgs): void {
+  const { tw, scene, groups } = args;
+  const el = tw.currentNode as Element;
+  const diameter = Number(el.getAttribute("r")) * 2;
+
+  const groupAttrs = getGroupAttrs(groups);
+
+  const ellipse = new ExcalidrawEllipse({
+    x: Number(el.getAttribute("cx")),
+    y: Number(el.getAttribute("cy")),
+    width: diameter,
+    height: diameter,
+    groupIds: groups.map((g) => g.id),
+    ...groupAttrs,
+  });
+
+  scene.elements.push(ellipse);
+
+  walk(args, tw.nextNode());
+}
+
+const walkers = {
+  svg: (args: WalkerArgs) => {
+    walk(args, args.tw.nextNode());
+  },
+
+  g: (args: WalkerArgs) => {
+    const nextArgs = {
+      ...args,
+      tw: createTreeWalker(args.tw.currentNode),
+      groups: [...args.groups, new Group(args.tw.currentNode as Element)],
+    };
+
+    walk(nextArgs, nextArgs.tw.nextNode());
+
+    walk(args, args.tw.nextSibling());
+  },
+
+  circle: walkEllipse,
+
+  ellipse: walkEllipse,
+
+  line: (args: WalkerArgs) => {
+    // unimplemented
+    walk(args, args.tw.nextNode());
+  },
+
+  polygon: (args: WalkerArgs) => {
+    // unimplemented
+    walk(args, args.tw.nextNode());
+  },
+
+  // TODO: Finish implementing this.
+  polyline: (args: WalkerArgs) => {
+    const { tw, scene, groups } = args;
+    const el = tw.currentNode as Element;
+
+    // parse points...
+    const groupAttrs = getGroupAttrs(groups);
+
+    const line = new ExcalidrawLine({
+      ...getGroupAttrs,
+    });
+
+    // unimplemented
+    walk(args, args.tw.nextNode());
+  },
+
+  rect: (args: WalkerArgs) => {
+    const { tw, scene, groups } = args;
+    const el = tw.currentNode as Element;
+
+    /*
+    NOTE: Currently there doesn't seem to be a way to specify the border
+          radius of a rect within Excalidraw. This means that attributes
+          rx and ry can't be used.
+    */
+    const isRound = el.hasAttribute('rx') || el.hasAttribute('ry');
+
+    const groupAttrs = getGroupAttrs(groups);
+    const rect = new ExcalidrawRectangle({
+      x: Number(attrOr<number>(el, 'x', 0)),
+      y: Number(attrOr<number>(el, 'y', 0)),
+      width: Number(attrOr<number>(el, 'width', 0)),
+      height: Number(attrOr<number>(el, 'height', 0)),
+      strokeSharpness: isRound ? 'round' : 'sharp',
+      ...groupAttrs,
+    });
+
+    scene.elements.push(rect);
+
+    walk(args, args.tw.nextNode());
+  },
+
+  path: (args: WalkerArgs) => {
+    const { tw, scene } = args;
+    const pathElements = elementsConverter.path
+      .convert(tw.currentNode as Element);
+
+    const exPaths = calculateElementsPositions(pathElements)
+      .map((el) => new ExcalidrawPath({ ...el }));
+
+    scene.elements = scene.elements.concat(exPaths);
+
+    walk(args, tw.nextNode());
+  },
+};
+
+function walk(args: WalkerArgs, nextNode: Node | null) {
+  if (!nextNode) return;
+
+  const nodeName = nextNode.nodeName as keyof typeof walkers;
+  if (walkers[nodeName]) {
+    walkers[nodeName](args);
+  }
+}
+
+export type ConversionResult = {
+  hasErrors: boolean;
+  errors: NodeListOf<Element> | null;
+  content: any; // Serialized Excalidraw JSON
+};
+
+export const convert = (svgString: string): ConversionResult => {
+  const parser = new DOMParser();
+  const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
+
+  // was there a parsing error?
+  const errorsElements = svgDOM.querySelectorAll("parsererror");
+  const hasErrors = errorsElements.length > 0;
+  let content = null;
+
+  if (hasErrors) {
+    console.error(
+      "There were errors while parsing the given SVG: ",
+      [...errorsElements].map((el) => el.innerHTML),
+    );
+  } else {
+    const tw = createTreeWalker(svgDOM);
+    const scene = new ExcalidrawScene();
+    const groups: Group[] = [];
+
+    walk({ tw, scene, groups }, tw.nextNode());
+
+    content = scene.toExJSON();
   }
 
   return {
-    type: "excalidraw",
-    version: 2,
-    source: "https://excalidraw.com",
-    elements: calculateElementsPositions(elements).map((element) => ({
-      angle: 0,
-      fillStyle: "hachure",
-      opacity: 100,
-      roughness: 1,
-      seed: Math.floor(
-        Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000,
-      ),
-      strokeSharpness: "sharp",
-      strokeWidth: 1,
-      ...element,
-    })),
+    hasErrors,
+    errors: hasErrors ? errorsElements : null,
+    content,
   };
-};
-
-/**
- * Parse a SVG file content
- */
-export const parse = (input: string): ExcalidrawScene => {
-  const svgDOM = getDOMFromString(input);
-  const nodeList = getNodeListFromDOM(svgDOM);
-
-  console.debug("Fetched nodes:", nodeList);
-
-  const elements = handleElements(nodeList);
-
-  return elements;
 };

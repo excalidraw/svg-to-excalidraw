@@ -55,7 +55,7 @@ const handleCubicCurveTo = (
   let inferredControlPoint;
 
   if (isSimpleForm) {
-    console.log("Last command:", lastCommand);
+    // console.log("Last command:", lastCommand);
 
     inferredControlPoint = ["C", "c"].includes(lastCommand?.type)
       ? [
@@ -82,7 +82,7 @@ const handleCubicCurveTo = (
     );
   }
 
-  console.log("Control points:", controlPoints);
+  // console.log("Control points:", controlPoints);
 
   return curveToPoints("cubic", controlPoints);
 };
@@ -98,7 +98,7 @@ const handleQuadraticCurveTo = (
   let inferredControlPoint;
 
   if (isSimpleForm) {
-    console.log("Last command:", lastCommand);
+    // console.log("Last command:", lastCommand);
 
     inferredControlPoint = ["Q", "q"].includes(lastCommand?.type)
       ? [
@@ -123,7 +123,7 @@ const handleQuadraticCurveTo = (
     ]);
   }
 
-  console.log("Control points:", controlPoints);
+  // console.log("Control points:", controlPoints);
 
   return curveToPoints("quadratic", controlPoints);
 };
@@ -142,17 +142,17 @@ const pathToPoints = (path: string): number[][][] => {
     throw new Error("No commands found in given path");
   }
 
-  console.log("Commands:", commands);
+  // console.log("Commands:", commands);
 
   for (const command of commands) {
-    console.groupCollapsed(command);
+    // console.groupCollapsed(command);
 
     const lastCommand = commandsHistory[commandsHistory.length - 2];
     const commandMatch = command.match(COMMAND_REGEX);
 
     currentPosition = points[points.length - 1] || currentPosition;
 
-    console.log("Current position:", currentPosition);
+    // console.log("Current position:", currentPosition);
 
     if (commandMatch?.length) {
       const commandType = commandMatch[0];
@@ -167,8 +167,8 @@ const pathToPoints = (path: string): number[][][] => {
         isRelative,
       });
 
-      console.log("Command type:", commandType);
-      console.log("Parameters:", parameters);
+      // console.log("Command type:", commandType);
+      // console.log("Parameters:", parameters);
 
       switch (commandType) {
         case "M":

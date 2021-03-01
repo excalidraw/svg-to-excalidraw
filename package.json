@@ -64,5 +64,9 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "nanoid": "^3.1.20",
+    "roughjs": "^4.3.1"
   }
 }
