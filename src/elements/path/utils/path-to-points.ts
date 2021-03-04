@@ -129,49 +129,82 @@ const handleQuadraticCurveTo = (
   return curveToPoints("quadratic", controlPoints);
 };
 
+/**
+ * @todo handle arcs rotation
+ * @todo handle specific cases where only one ellipse can exist
+ */
 const handleArcTo = (
   currentPosition: number[],
-  [
-    radiusX,
-    radiusY,
-    rotation,
-    large,
-    sweep,
-    destX,
-    destY,
-  ]: number[],
+  [radiusX, radiusY, , large, sweep, destX, destY]: number[],
   isRelative: boolean,
 ): number[][] => {
-  destX = isRelative ? currentPosition[0] + destX : destX
-  destY = isRelative ? currentPosition[1] + destY : destY
-  
-  console.debug("Destination is:", destX, destY)
+  destX = isRelative ? currentPosition[0] + destX : destX;
+  destY = isRelative ? currentPosition[1] + destY : destY;
 
-  const ellipsesCenter =  getEllipsesCenter(currentPosition[0], currentPosition[1], destX, destY, radiusX, radiusY)
+  console.debug("Destination is:", destX, destY);
 
-  console.debug("Found ellipses center:", ellipsesCenter)
+  const ellipsesCenter = getEllipsesCenter(
+    currentPosition[0],
+    currentPosition[1],
+    destX,
+    destY,
+    radiusX,
+    radiusY,
+  );
+
+  console.debug("Found ellipses center:", ellipsesCenter);
 
   const ellipsesPoints = [
-      getEllipsePoints(ellipsesCenter[0][0], ellipsesCenter[0][1], radiusX, radiusY),
-      getEllipsePoints(ellipsesCenter[1][0], ellipsesCenter[1][1], radiusX, radiusY),
-  ]
+    getEllipsePoints(
+      ellipsesCenter[0][0],
+      ellipsesCenter[0][1],
+      radiusX,
+      radiusY,
+    ),
+    getEllipsePoints(
+      ellipsesCenter[1][0],
+      ellipsesCenter[1][1],
+      radiusX,
+      radiusY,
+    ),
+  ];
 
-  console.debug("Ellipses points:", ellipsesPoints)
+  console.debug("Ellipses points:", ellipsesPoints);
 
   const arcs = [
-      findArc(ellipsesPoints[0], !!sweep, currentPosition[0], currentPosition[1], destX, destY),
-      findArc(ellipsesPoints[1], !!sweep, currentPosition[0], currentPosition[1], destX, destY),
-  ]
+    findArc(
+      ellipsesPoints[0],
+      !!sweep,
+      currentPosition[0],
+      currentPosition[1],
+      destX,
+      destY,
+    ),
+    findArc(
+      ellipsesPoints[1],
+      !!sweep,
+      currentPosition[0],
+      currentPosition[1],
+      destX,
+      destY,
+    ),
+  ];
 
-  console.debug("Found possible arcs:", arcs)
+  console.debug("Found possible arcs:", arcs);
 
-  const finalArc = arcs.reduce((arc, curArc) => (large && curArc.length > arc.length) || (!large && (!arc.length || curArc.length < arc.length))
-    ? curArc : arc, [])
+  const finalArc = arcs.reduce(
+    (arc, curArc) =>
+      (large && curArc.length > arc.length) ||
+      (!large && (!arc.length || curArc.length < arc.length))
+        ? curArc
+        : arc,
+    [],
+  );
 
-  console.debug("Final arc:", finalArc)
+  console.debug("Final arc:", finalArc);
 
-  return finalArc
-}
+  return finalArc;
+};
 
 /**
  * Convert a SVG path data to list of points
@@ -271,13 +304,7 @@ const pathToPoints = (path: string): number[][][] => {
           break;
         case "A":
         case "a":
-          points.push(
-            ...handleArcTo(
-              currentPosition,
-              parameters,
-              isRelative,
-            ),
-          );
+          points.push(...handleArcTo(currentPosition, parameters, isRelative));
 
           break;
         case "Z":
