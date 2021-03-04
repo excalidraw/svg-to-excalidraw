@@ -2,7 +2,7 @@ import { PathCommand } from "../../../types";
 import { safeNumber } from "../../../utils";
 import { curveToPoints } from "./bezier";
 
-const PATH_COMMANDS_REGEX = /(?:([HhVv] *-?\d+(?:\.\d+)?)|([MmLlTt](?: *-?\d+(?:\.\d+)?(?:,| *)?){2})|([Cc](?: *-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| *)?){6})|([QqSs](?: *-?\d+(?:\.\d+)?(?:\.\d+)?(?:,| *)?){4})|(z|Z))/g;
+const PATH_COMMANDS_REGEX = /(?:([HhVv] *-?\d*(?:\.\d+)?)|([MmLlTt](?: *-?\d*(?:\.\d+)?(?:,| *)?){2})|([Cc](?: *-?\d*(?:\.\d+)?(?:,| *)?){6})|([QqSs](?: *-?\d*(?:\.\d+)?(?:,| *)?){4})|(z|Z))/g;
 const COMMAND_REGEX = /(?:[MmLlHhVvCcSsQqTtZz]|(-?\d+(?:\.\d+)?))/g;
 
 const handleMoveToAndLineTo = (
