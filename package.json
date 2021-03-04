@@ -2,7 +2,6 @@
   "name": "svg-to-excalidraw",
   "version": "0.0.0",
   "description": "Convert SVG to Excalidraw’s file format",
-  "main": "dist/bundle.js",
   "scripts": {
     "build": "yarn clean && webpack --config webpack.config.js",
     "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
@@ -19,25 +18,8 @@
     "test:typecheck": "tsc"
   },
   "prettier": "@excalidraw/prettier-config",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/excalidraw/svg-to-excalidraw.git"
-  },
-  "keywords": [
-    "excalidraw",
-    "svg",
-    "svg-to-excalidraw"
-  ],
   "author": "Nicolas Goudry <goudry.nicolas@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/excalidraw/svg-to-excalidraw.git/issues"
-  },
-  "files": [
-    "dist/bundle.js",
-    "svg-to-excalidraw.d.ts"
-  ],
-  "homepage": "https://github.com/excalidraw/svg-to-excalidraw.git#readme",
   "devDependencies": {
     "@babel/core": "7.13.8",
     "@babel/plugin-proposal-class-properties": "7.13.0",
