@@ -2,6 +2,11 @@
   "name": "svg-to-excalidraw",
   "version": "0.0.0",
   "description": "Convert SVG to Excalidraw’s file format",
+  "main": "dist/bundle.js",
+  "files": [
+    "dist/bundle.js",
+    "svg-to-excalidraw.d.ts"
+  ],
   "scripts": {
     "build": "yarn clean && webpack --config webpack.config.js",
     "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
@@ -21,7 +26,7 @@
   "author": "Nicolas Goudry <goudry.nicolas@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/chroma-js": "^2.1.3",
+    "@types/chroma-js": "2.1.3",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.2.2",
     "eslint-plugin-import": "2.22.1",
