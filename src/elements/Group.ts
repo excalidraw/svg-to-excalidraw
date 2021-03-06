@@ -1,25 +1,13 @@
 import { randomId } from "../utils";
-
-const groupAttrs = {
-  fill: "backgroundColor",
-  stroke: "strokeColor",
-  "stroke-width": "strokeWidth",
-} as const;
-
-const groupAttrKeys = Object.keys(groupAttrs);
+import { presAttrsToElementValues } from '../attributes';
+import { ExcalidrawElementBase } from "../elements/ExcalidrawElement";
 
 export function getGroupAttrs(groups: Group[]): any {
   return groups.reduce((acc, { element }) => {
-    for (const attr of groupAttrKeys) {
-      if (element.hasAttribute(attr)) {
-        const val = element.getAttribute(attr) as string;
-        // @ts-ignore
-        acc[groupAttrs[attr]] = val;
-      }
-    }
+    const elVals = presAttrsToElementValues(element);
 
-    return acc;
-  }, {} as { [key: keyof typeof groupAttrs]: string });
+    return { ...acc, ...elVals };
+  }, {} as Partial<ExcalidrawElementBase>);
 }
 
 class Group {

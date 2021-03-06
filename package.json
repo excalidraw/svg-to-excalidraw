@@ -46,6 +46,7 @@
     "@babel/preset-env": "7.13.5",
     "@babel/preset-typescript": "7.13.0",
     "@excalidraw/prettier-config": "1.0.1",
+    "@types/chroma-js": "^2.1.3",
     "@typescript-eslint/eslint-plugin": "4.15.2",
     "@typescript-eslint/parser": "4.15.2",
     "babel-eslint": "10.1.0",
@@ -66,6 +67,8 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "chroma-js": "^2.1.1",
+    "gl-matrix": "^3.3.0",
     "nanoid": "^3.1.20",
     "roughjs": "^4.3.1"
   }

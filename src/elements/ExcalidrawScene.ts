@@ -1,17 +1,10 @@
-import ExcalidrawEllipse from "./ExcalidrawEllipse";
-import ExcalidrawPath from "./ExcalidrawPath";
-import ExcalidrawRectangle from "./ExcalidrawRectangle";
-
-type ExcalidrawElement =
-  | ExcalidrawEllipse
-  | ExcalidrawPath
-  | ExcalidrawRectangle;
+import { ExcalidrawGenericElement } from "./ExcalidrawElement";
 
 class ExcalidrawScene {
   type = "excalidraw";
   version = 2;
   source = "https://excalidraw.com";
-  elements: ExcalidrawElement[] = [];
+  elements: ExcalidrawGenericElement[] = [];
 
   constructor(elements = []) {
     this.elements = elements;

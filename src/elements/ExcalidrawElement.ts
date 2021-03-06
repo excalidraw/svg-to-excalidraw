@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { randomId, randomInteger } from '../utils';
 
 import {
@@ -9,52 +8,98 @@ import {
   ExcalidrawLinearElement,
 } from "../types";
 
-export type ExcalidrawElementConstructorArgs = Omit<
-  Partial<ExcalidrawElement>,
-  "seed" | "version" | "versionNonce" | "isDeleted"
->;
-
-class ExcalidrawElement {
-  [key: string]: any;
-
-  id: string = randomId();
-  x: number = 0;
-  y: number = 0;
-  strokeColor: string = "#000000";
-  backgroundColor: string = "#FFFFFF";
-  fillStyle: FillStyle = "solid";
-  strokeWidth: number = 1;
-  strokeStyle: StrokeStyle = "solid";
-  strokeSharpness: StrokeSharpness = "sharp";
-  roughness: number = 1;
-  opacity: number = 100;
-  width: number = 0;
-  height: number = 0;
-  angle: number = 0;
+export type ExcalidrawElementBase = {
+  id: string,
+  x: number,
+  y: number,
+  strokeColor: string,
+  backgroundColor: string,
+  fillStyle: FillStyle,
+  strokeWidth: number,
+  strokeStyle: StrokeStyle,
+  strokeSharpness: StrokeSharpness,
+  roughness: number,
+  opacity: number,
+  width: number,
+  height: number,
+  angle: number,
   /** Random integer used to seed shape generation so that the roughjs shape
       doesn't differ across renders. */
-  seed: number = randomInteger();
+  seed: number,
   /** Integer that is sequentially incremented on each change. Used to reconcile
       elements during collaboration or when saving to server. */
-  version: number = 0;
+  version: number,
   /** Random integer that is regenerated on each change.
       Used for deterministic reconciliation of updates during collaboration,
       in case the versions (see above) are identical. */
-  versionNonce: number = 0;
-  isDeleted = false;
+  versionNonce: number,
+  isDeleted: boolean,
   /** List of groups the element belongs to.
       Ordered from deepest to shallowest. */
-  groupIds: GroupId[] = [];
+  groupIds: GroupId[],
   /** Ids of (linear) elements that are bound to this element. */
-  boundElementIds: ExcalidrawLinearElement["id"][] | null = null;
+  boundElementIds: ExcalidrawLinearElement["id"][] | null,
+}
 
-  constructor(args: ExcalidrawElementConstructorArgs) {
-    Object.entries(args).forEach(([key, val]) => {
-      if (val) {
-        this[key] = val;
-      }
-    });
+export type ExcalidrawRectangle = ExcalidrawElementBase & {
+  type: 'rectangle';
+};
+
+export type ExcalidrawLine = ExcalidrawElementBase & {
+  type: 'line',
+};
+
+export type ExcalidrawEllipse = ExcalidrawElementBase & {
+  type: 'ellipse'
+};
+
+export type ExcalidrawGenericElement =
+| ExcalidrawRectangle
+| ExcalidrawEllipse
+| ExcalidrawLine;
+
+export function createExElement(): ExcalidrawElementBase {
+  return {
+    id: randomId(),
+    x: 0,
+    y: 0,
+    strokeColor: "#000000",
+    backgroundColor: "#FFFFFF",
+    fillStyle: "solid",
+    strokeWidth: 1,
+    strokeStyle: "solid",
+    strokeSharpness: "sharp",
+    roughness: 0,
+    opacity: 100,
+    width: 0,
+    height: 0,
+    angle: 0,
+    seed: randomInteger(),
+    version: 0,
+    versionNonce: 0,
+    isDeleted: false,
+    groupIds: [],
+    boundElementIds: null,
   }
 }
 
-export default ExcalidrawElement;
+export function createExRect(): ExcalidrawRectangle {
+  return {
+    ...createExElement(),
+    type: 'rectangle',
+  }
+}
+
+export function createExLine(): ExcalidrawLine {
+  return {
+    ...createExElement(),
+    type: 'line',
+  }
+}
+
+export function createExEllipse(): ExcalidrawEllipse {
+  return {
+    ...createExElement(),
+    type: 'ellipse',
+  }
+}
