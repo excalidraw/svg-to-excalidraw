@@ -6,10 +6,11 @@ const parse = (node: Element) => {
   const data = node.getAttribute("d");
   const backgroundColor = node.getAttribute("fill");
   const strokeColor = node.getAttribute("stroke");
-  
+
   return {
     data: data || "",
-    backgroundColor: (backgroundColor !== "currentColor" && backgroundColor) || "transparent",
+    backgroundColor:
+      (backgroundColor !== "currentColor" && backgroundColor) || "transparent",
     strokeColor: (strokeColor !== "currentColor" && strokeColor) || "#000000",
   };
 };
