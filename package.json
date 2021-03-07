@@ -31,7 +31,7 @@
     "@babel/preset-typescript": "7.13.0",
     "@excalidraw/eslint-config": "0.0.12-beta",
     "@excalidraw/prettier-config": "1.0.2",
-    "@typescript-eslint/eslint-plugin": "4.16.0",
+    "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "4.16.0",
     "eslint": "7.21.0",
     "eslint-config-prettier": "8.1.0",
