@@ -16,8 +16,6 @@ import {
 import {
   presAttrsToElementValues,
   filterAttrsToElementValues,
-  has,
-  get,
   getNum,
 } from "./attributes";
 import { getTransformMatrix } from "./transform";
@@ -92,12 +90,6 @@ type WalkerArgs = {
   scene: ExcalidrawScene;
   groups: Group[];
 };
-
-function attrOr<D>(el: Element, attr: string, backup: D): D {
-  return el.hasAttribute(attr)
-    ? ((el.getAttribute(attr) as unknown) as D)
-    : backup;
-}
 
 const presAttrs = (
   el: Element,
@@ -261,9 +253,6 @@ const walkers = {
     const w = rx * 2;
     const h = ry * 2;
 
-    console.log(rx, ry, cx, cy, x, y, w, h);
-
-
     const mat = getTransformMatrix(el, groups);
 
     // @ts-ignore
@@ -324,6 +313,23 @@ const walkers = {
     const { tw, scene, groups } = args;
     const el = tw.currentNode as Element;
 
+    const x = getNum(el, "x", 0);
+    const y = getNum(el, "y", 0);
+    const w = getNum(el, "width", 0);
+    const h = getNum(el, "height", 0);
+
+    const mat = getTransformMatrix(el, groups);
+
+    // @ts-ignore
+    const m = mat4.fromValues(
+      w, 0, 0, 0,
+      0, h, 0, 0,
+      0, 0, 1, 0,
+      x, y, 0, 1
+    );
+
+    const result = mat4.multiply(mat4.create(), mat, m);
+
     /*
     NOTE: Currently there doesn't seem to be a way to specify the border
           radius of a rect within Excalidraw. This means that attributes
@@ -331,15 +337,14 @@ const walkers = {
     */
     const isRound = el.hasAttribute("rx") || el.hasAttribute("ry");
 
-    const groupAttrs = getGroupAttrs(groups);
     const rect: ExcalidrawRectangle = {
       ...createExRect(),
-      x: Number(attrOr<number>(el, "x", 0)),
-      y: Number(attrOr<number>(el, "y", 0)),
-      width: Number(attrOr<number>(el, "width", 0)),
-      height: Number(attrOr<number>(el, "height", 0)),
+      ...presAttrs(el, groups),
+      x: result[12],
+      y: result[13],
+      width: result[0],
+      height: result[5],
       strokeSharpness: isRound ? "round" : "sharp",
-      ...groupAttrs,
     };
 
     scene.elements.push(rect);
