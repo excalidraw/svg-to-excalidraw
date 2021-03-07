@@ -1,19 +1,19 @@
 import chroma from "chroma-js";
 import { ExcalidrawElementBase } from "./elements/ExcalidrawElement";
 
-const hexWithAlpha = (color: string, alpha: number): string => {
+export function hexWithAlpha(color: string, alpha: number): string {
   return chroma(color).alpha(alpha).css();
-};
+}
 
-function has(el: Element, attr: string): boolean {
+export function has(el: Element, attr: string): boolean {
   return el.hasAttribute(attr);
 }
 
-function get(el: Element, attr: string, backup?: string): string {
+export function get(el: Element, attr: string, backup?: string): string {
   return el.getAttribute(attr) || backup || "";
 }
 
-function getNum(el: Element, attr: string, backup?: number): number {
+export function getNum(el: Element, attr: string, backup?: number): number {
   const numVal = Number(get(el, attr));
   return numVal === NaN ? backup || 0 : numVal;
 }

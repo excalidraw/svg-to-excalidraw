@@ -16,6 +16,9 @@ import {
 import {
   presAttrsToElementValues,
   filterAttrsToElementValues,
+  has,
+  get,
+  getNum,
 } from "./attributes";
 import { getTransformMatrix } from "./transform";
 
@@ -117,16 +120,22 @@ const allwaysPassedUseAttrs = [
   "xlink:href",
 ];
 
-const getDefElWithCorrectAttrs = (defEl: Element, useEl: Element): Element => {
-  /*
+/*
+  "Most attributes on use do not override those already on the element
+  referenced by use. (This differs from how CSS style attributes override
+  those set 'earlier' in the cascade). Only the attributes x, y, width,
+  height and href on the use element will override those set on the
+  referenced element. However, any other attributes not set on the referenced
+  element will be applied to the use element."
+
   Situation 1: Attr is set on defEl, NOT on useEl
     - result: use defEl attr
   Situation 2: Attr is on useEl, NOT on defEl
     - result: use the useEl attr
   Situation 3: Attr is on both useEl and defEl
     - result: use the defEl attr (Unless x, y, width, height, href, xlink:href)
-  */
-
+*/
+const getDefElWithCorrectAttrs = (defEl: Element, useEl: Element): Element => {
   const finalEl = [...useEl.attributes].reduce((el, attr) => {
     if (skippedUseAttrs.includes(attr.value)) {
       return el;
@@ -145,27 +154,6 @@ const getDefElWithCorrectAttrs = (defEl: Element, useEl: Element): Element => {
   return finalEl;
 };
 
-function walkEllipse(args: WalkerArgs): void {
-  const { tw, scene, groups } = args;
-  const el = tw.currentNode as Element;
-  const diameter = Number(el.getAttribute("r")) * 2;
-
-  const ellipse: ExcalidrawEllipse = {
-    ...createExEllipse(),
-    ...presAttrs(el, groups),
-    // Need to actual calculate the cx and cy (center point)
-    x: Number(el.getAttribute("cx")),
-    y: Number(el.getAttribute("cy")),
-    width: diameter,
-    height: diameter,
-    groupIds: groups.map((g) => g.id),
-  };
-
-  scene.elements.push(ellipse);
-
-  walk(args, tw.nextNode());
-}
-
 const walkers = {
   svg: (args: WalkerArgs) => {
     walk(args, args.tw.nextNode());
@@ -183,14 +171,6 @@ const walkers = {
     walk(args, args.tw.nextSibling());
   },
 
-  /*
-  "Most attributes on use do not override those already on the element
-  referenced by use. (This differs from how CSS style attributes override
-  those set 'earlier' in the cascade). Only the attributes x, y, width,
-  height and href on the use element will override those set on the
-  referenced element. However, any other attributes not set on the referenced
-  element will be applied to the use element."
-  */
   use: (args: WalkerArgs) => {
     const { root, tw, scene, groups } = args;
     const useEl = tw.currentNode as Element;
@@ -209,13 +189,16 @@ const walkers = {
 
     const tempScene = new ExcalidrawScene();
 
-    const defArgs = {
-      ...args,
-      scene: tempScene,
-      tw: createTreeWalker(defEl),
-    };
+    const finalEl = getDefElWithCorrectAttrs(defEl, useEl);
 
-    walk(defArgs, defEl);
+    walk(
+      {
+        ...args,
+        scene: tempScene,
+        tw: createTreeWalker(finalEl),
+      },
+      finalEl,
+    );
 
     const exEl = tempScene.elements.pop();
 
@@ -223,11 +206,9 @@ const walkers = {
       throw new Error("Unable to create ex element");
     }
 
-    const finalEl = getDefElWithCorrectAttrs(defEl, useEl);
-
     const ex = {
       ...exEl,
-      ...presAttrs(finalEl, groups),
+      // ...presAttrs(finalEl, groups), // is this needed?
     };
 
     scene.elements.push(ex);
@@ -235,9 +216,32 @@ const walkers = {
     walk(args, args.tw.nextNode());
   },
 
-  circle: walkEllipse,
+  circle: (args: WalkerArgs): void => {
+    const { tw, scene, groups } = args;
+    const el = tw.currentNode as Element;
+    const diameter = getNum(el, "r") * 2;
 
-  ellipse: walkEllipse,
+    const x = getNum(el, "x", 0);
+    const y = getNum(el, "y", 0);
+    const cx = getNum(el, "cx", 0);
+    const cy = getNum(el, "cy", 0);
+
+    const ellipse: ExcalidrawEllipse = {
+      ...createExEllipse(),
+      ...presAttrs(el, groups),
+      x: x + cx,
+      y: y + cy,
+      width: diameter,
+      height: diameter,
+      groupIds: groups.map((g) => g.id),
+    };
+
+    scene.elements.push(ellipse);
+
+    walk(args, tw.nextNode());
+  },
+
+  // ellipse: walkEllipse,
 
   line: (args: WalkerArgs) => {
     // unimplemented
