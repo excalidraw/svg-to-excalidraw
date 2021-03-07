@@ -1,4 +1,4 @@
-import { vec3 } from "gl-matrix";
+import { vec3, mat4 } from "gl-matrix";
 import elementsConverter from "./elements";
 import { RawElement } from "./types";
 import { safeNumber } from "./utils";
@@ -172,7 +172,7 @@ const walkers = {
   },
 
   use: (args: WalkerArgs) => {
-    const { root, tw, scene, groups } = args;
+    const { root, tw, scene } = args;
     const useEl = tw.currentNode as Element;
 
     const id = useEl.getAttribute("href") || useEl.getAttribute("xlink:href");
@@ -206,12 +206,7 @@ const walkers = {
       throw new Error("Unable to create ex element");
     }
 
-    const ex = {
-      ...exEl,
-      // ...presAttrs(finalEl, groups), // is this needed?
-    };
-
-    scene.elements.push(ex);
+    scene.elements.push(exEl);
 
     walk(args, args.tw.nextNode());
   },
@@ -219,20 +214,75 @@ const walkers = {
   circle: (args: WalkerArgs): void => {
     const { tw, scene, groups } = args;
     const el = tw.currentNode as Element;
-    const diameter = getNum(el, "r") * 2;
 
-    const x = getNum(el, "x", 0);
-    const y = getNum(el, "y", 0);
+    const r = getNum(el, "r", 0);
+    const d = r * 2;
+    const x = getNum(el, "x", 0) + getNum(el, "cx", 0) - r;
+    const y = getNum(el, "y", 0) + getNum(el, "cy", 0) - r;
+    
+    const mat = getTransformMatrix(el, groups);
+
+    // @ts-ignore
+    const m = mat4.fromValues(
+      d, 0, 0, 0,
+      0, d, 0, 0,
+      0, 0, 1, 0,
+      x, y, 0, 1
+    );
+
+    const result = mat4.multiply(mat4.create(), mat, m);
+
+
+    const circle: ExcalidrawEllipse = {
+      ...createExEllipse(),
+      ...presAttrs(el, groups),
+      x: result[12],
+      y: result[13],
+      width: result[0],
+      height: result[5],
+      groupIds: groups.map((g) => g.id),
+    };
+
+    scene.elements.push(circle);
+
+    walk(args, tw.nextNode());
+  },
+
+  ellipse: (args: WalkerArgs): void => {
+    const { tw, scene, groups } = args;
+    const el = tw.currentNode as Element;
+
+    const rx = getNum(el, "rx", 0);
+    const ry = getNum(el, "ry", 0);
     const cx = getNum(el, "cx", 0);
     const cy = getNum(el, "cy", 0);
+    const x = getNum(el, "x", 0) + cx - rx;
+    const y = getNum(el, "y", 0) + cy - ry;
+    const w = rx * 2;
+    const h = ry * 2;
+
+    console.log(rx, ry, cx, cy, x, y, w, h);
+
+
+    const mat = getTransformMatrix(el, groups);
+
+    // @ts-ignore
+    const m = mat4.fromValues(
+      w, 0, 0, 0,
+      0, h, 0, 0,
+      0, 0, 1, 0,
+      x, y, 0, 1
+    );
+
+    const result = mat4.multiply(mat4.create(), mat, m);
 
     const ellipse: ExcalidrawEllipse = {
       ...createExEllipse(),
       ...presAttrs(el, groups),
-      x: x + cx,
-      y: y + cy,
-      width: diameter,
-      height: diameter,
+      x: result[12],
+      y: result[13],
+      width: result[0],
+      height: result[5],
       groupIds: groups.map((g) => g.id),
     };
 
@@ -240,8 +290,6 @@ const walkers = {
 
     walk(args, tw.nextNode());
   },
-
-  // ellipse: walkEllipse,
 
   line: (args: WalkerArgs) => {
     // unimplemented
