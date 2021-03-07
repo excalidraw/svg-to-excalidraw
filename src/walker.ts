@@ -1,4 +1,4 @@
-import { vec3 } from 'gl-matrix';
+import { vec3 } from "gl-matrix";
 import elementsConverter from "./elements";
 import { RawElement } from "./types";
 import { safeNumber } from "./utils";
@@ -13,8 +13,11 @@ import {
   ExcalidrawEllipse,
   ExcalidrawLine,
 } from "./elements/ExcalidrawElement";
-import { presAttrsToElementValues, filterAttrsToElementValues } from "./attributes";
-import { getTransformMatrix } from './transform';
+import {
+  presAttrsToElementValues,
+  filterAttrsToElementValues,
+} from "./attributes";
+import { getTransformMatrix } from "./transform";
 
 const SUPPORTED_TAGS = [
   "svg",
@@ -30,8 +33,13 @@ const SUPPORTED_TAGS = [
 const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
   const { x: minX, y: minY } = elements.reduce(
     (minPoint, { x, y }) => {
-      if (x < minPoint.x) minPoint.x = x;
-      if (y < minPoint.y) minPoint.y = y;
+      if (x < minPoint.x) {
+        minPoint.x = x;
+      }
+
+      if (y < minPoint.y) {
+        minPoint.y = y;
+      }
 
       return minPoint;
     },
@@ -99,6 +107,44 @@ const presAttrs = (
   };
 };
 
+const skippedUseAttrs = ["id"];
+const allwaysPassedUseAttrs = [
+  "x",
+  "y",
+  "width",
+  "height",
+  "href",
+  "xlink:href",
+];
+
+const getDefElWithCorrectAttrs = (defEl: Element, useEl: Element): Element => {
+  /*
+  Situation 1: Attr is set on defEl, NOT on useEl
+    - result: use defEl attr
+  Situation 2: Attr is on useEl, NOT on defEl
+    - result: use the useEl attr
+  Situation 3: Attr is on both useEl and defEl
+    - result: use the defEl attr (Unless x, y, width, height, href, xlink:href)
+  */
+
+  const finalEl = [...useEl.attributes].reduce((el, attr) => {
+    if (skippedUseAttrs.includes(attr.value)) {
+      return el;
+    }
+
+    // Does defEl have the attr? If so, use it, else use the useEl attr
+    if (
+      !defEl.hasAttribute(attr.name) ||
+      allwaysPassedUseAttrs.includes(attr.name)
+    ) {
+      el.setAttribute(attr.name, useEl.getAttribute(attr.name) || "");
+    }
+    return el;
+  }, defEl.cloneNode() as Element);
+
+  return finalEl;
+};
+
 function walkEllipse(args: WalkerArgs): void {
   const { tw, scene, groups } = args;
   const el = tw.currentNode as Element;
@@ -107,6 +153,7 @@ function walkEllipse(args: WalkerArgs): void {
   const ellipse: ExcalidrawEllipse = {
     ...createExEllipse(),
     ...presAttrs(el, groups),
+    // Need to actual calculate the cx and cy (center point)
     x: Number(el.getAttribute("cx")),
     y: Number(el.getAttribute("cy")),
     width: diameter,
@@ -176,10 +223,11 @@ const walkers = {
       throw new Error("Unable to create ex element");
     }
 
+    const finalEl = getDefElWithCorrectAttrs(defEl, useEl);
+
     const ex = {
       ...exEl,
-      ...presAttrs(defEl, []),
-      ...presAttrs(useEl, groups),
+      ...presAttrs(finalEl, groups),
     };
 
     scene.elements.push(ex);
@@ -256,7 +304,11 @@ const walkers = {
 
     const exPaths = calculateElementsPositions(pathElements).map((exp) => {
       exp.points = exp.points.map(([x, y]) => {
-        const [newX, newY] = vec3.transformMat4(vec3.create(), vec3.fromValues(x, y, 1), mat)
+        const [newX, newY] = vec3.transformMat4(
+          vec3.create(),
+          vec3.fromValues(x, y, 1),
+          mat,
+        );
 
         return [newX, newY];
       });
@@ -267,7 +319,7 @@ const walkers = {
       };
     });
 
-    console.log('exPaths', exPaths);
+    console.log("exPaths", exPaths);
 
     scene.elements = scene.elements.concat(exPaths);
 
@@ -276,7 +328,9 @@ const walkers = {
 };
 
 export function walk(args: WalkerArgs, nextNode: Node | null): void {
-  if (!nextNode) return;
+  if (!nextNode) {
+    return;
+  }
 
   const nodeName = nextNode.nodeName as keyof typeof walkers;
   if (walkers[nodeName]) {
