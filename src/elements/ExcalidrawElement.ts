@@ -1,4 +1,4 @@
-import { randomId, randomInteger } from '../utils';
+import { randomId, randomInteger } from "../utils";
 
 import {
   GroupId,
@@ -9,54 +9,54 @@ import {
 } from "../types";
 
 export type ExcalidrawElementBase = {
-  id: string,
-  x: number,
-  y: number,
-  strokeColor: string,
-  backgroundColor: string,
-  fillStyle: FillStyle,
-  strokeWidth: number,
-  strokeStyle: StrokeStyle,
-  strokeSharpness: StrokeSharpness,
-  roughness: number,
-  opacity: number,
-  width: number,
-  height: number,
-  angle: number,
+  id: string;
+  x: number;
+  y: number;
+  strokeColor: string;
+  backgroundColor: string;
+  fillStyle: FillStyle;
+  strokeWidth: number;
+  strokeStyle: StrokeStyle;
+  strokeSharpness: StrokeSharpness;
+  roughness: number;
+  opacity: number;
+  width: number;
+  height: number;
+  angle: number;
   /** Random integer used to seed shape generation so that the roughjs shape
       doesn't differ across renders. */
-  seed: number,
+  seed: number;
   /** Integer that is sequentially incremented on each change. Used to reconcile
       elements during collaboration or when saving to server. */
-  version: number,
+  version: number;
   /** Random integer that is regenerated on each change.
       Used for deterministic reconciliation of updates during collaboration,
       in case the versions (see above) are identical. */
-  versionNonce: number,
-  isDeleted: boolean,
+  versionNonce: number;
+  isDeleted: boolean;
   /** List of groups the element belongs to.
       Ordered from deepest to shallowest. */
-  groupIds: GroupId[],
+  groupIds: GroupId[];
   /** Ids of (linear) elements that are bound to this element. */
-  boundElementIds: ExcalidrawLinearElement["id"][] | null,
-}
+  boundElementIds: ExcalidrawLinearElement["id"][] | null;
+};
 
 export type ExcalidrawRectangle = ExcalidrawElementBase & {
-  type: 'rectangle';
+  type: "rectangle";
 };
 
 export type ExcalidrawLine = ExcalidrawElementBase & {
-  type: 'line',
+  type: "line";
 };
 
 export type ExcalidrawEllipse = ExcalidrawElementBase & {
-  type: 'ellipse'
+  type: "ellipse";
 };
 
 export type ExcalidrawGenericElement =
-| ExcalidrawRectangle
-| ExcalidrawEllipse
-| ExcalidrawLine;
+  | ExcalidrawRectangle
+  | ExcalidrawEllipse
+  | ExcalidrawLine;
 
 export function createExElement(): ExcalidrawElementBase {
   return {
@@ -64,7 +64,7 @@ export function createExElement(): ExcalidrawElementBase {
     x: 0,
     y: 0,
     strokeColor: "#000000",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#000000",
     fillStyle: "solid",
     strokeWidth: 1,
     strokeStyle: "solid",
@@ -80,26 +80,26 @@ export function createExElement(): ExcalidrawElementBase {
     isDeleted: false,
     groupIds: [],
     boundElementIds: null,
-  }
+  };
 }
 
 export function createExRect(): ExcalidrawRectangle {
   return {
     ...createExElement(),
-    type: 'rectangle',
-  }
+    type: "rectangle",
+  };
 }
 
 export function createExLine(): ExcalidrawLine {
   return {
     ...createExElement(),
-    type: 'line',
-  }
+    type: "line",
+  };
 }
 
 export function createExEllipse(): ExcalidrawEllipse {
   return {
     ...createExElement(),
-    type: 'ellipse',
-  }
+    type: "ellipse",
+  };
 }

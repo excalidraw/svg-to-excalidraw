@@ -1,26 +1,77 @@
 import chroma from "chroma-js";
 import { ExcalidrawElementBase } from "./elements/ExcalidrawElement";
 
-const hasAttr = (el: Element) => (attr: string): boolean => {
-  return el.hasAttribute(attr);
-};
-
-const getAttr = (el: Element) => (attr: string): string => {
-  return (el.getAttribute(attr) as unknown) as string;
-};
-
-const getAttrAsNumber = (el: Element) => (attr: string): number => {
-  return Number(getAttr(el)(attr));
-};
-
-const getAttrOr = (el: Element) => <D>(attr: string, backup: D): D => {
-  return el.hasAttribute(attr)
-    ? ((el.getAttribute(attr) as unknown) as D)
-    : backup;
-};
-
 const hexWithAlpha = (color: string, alpha: number): string => {
   return chroma(color).alpha(alpha).css();
+};
+
+function has(el: Element, attr: string): boolean {
+  return el.hasAttribute(attr);
+}
+
+function get(el: Element, attr: string, backup?: string): string {
+  return el.getAttribute(attr) || backup || "";
+}
+
+function getNum(el: Element, attr: string, backup?: number): number {
+  const numVal = Number(get(el, attr));
+  return numVal === NaN ? backup || 0 : numVal;
+}
+
+const presAttrs = {
+  stroke: "stroke",
+  "stroke-opacity": "stroke-opacity",
+  "stroke-width": "stroke-width",
+  fill: "fill",
+  "fill-opacity": "fill-opacity",
+  opacity: "opacity",
+} as const;
+
+type ExPartialElement = Partial<ExcalidrawElementBase>;
+
+type AttrHandlerArgs = {
+  el: Element;
+  exVals: ExPartialElement;
+};
+
+type PresAttrHandlers = {
+  [key in keyof typeof presAttrs]: (args: AttrHandlerArgs) => void;
+};
+
+const attrHandlers: PresAttrHandlers = {
+  stroke: ({ el, exVals }) => {
+    const strokeColor = get(el, "stroke");
+
+    exVals.strokeColor = has(el, "stroke-opacity")
+      ? hexWithAlpha(strokeColor, getNum(el, "stroke-opacity"))
+      : strokeColor;
+  },
+
+  "stroke-opacity": ({ el, exVals }) => {
+    exVals.strokeColor = hexWithAlpha(
+      get(el, "stroke", "#000000"),
+      getNum(el, "stroke-opacity"),
+    );
+  },
+
+  "stroke-width": ({ el, exVals }) => {
+    exVals.strokeWidth = getNum(el, "stroke-width");
+  },
+
+  fill: ({ el, exVals }) => {
+    exVals.backgroundColor = get(el, "fill");
+  },
+
+  "fill-opacity": ({ el, exVals }) => {
+    exVals.backgroundColor = hexWithAlpha(
+      get(el, "fill", "#000000"),
+      getNum(el, "fill-opacity"),
+    );
+  },
+
+  opacity: ({ el, exVals }) => {
+    exVals.opacity = getNum(el, "opacity", 100);
+  },
 };
 
 // Presentation Attributes for SVG Elements:
@@ -28,54 +79,17 @@ const hexWithAlpha = (color: string, alpha: number): string => {
 export function presAttrsToElementValues(
   el: Element,
 ): Partial<ExcalidrawElementBase> {
-  const elVals: Partial<ExcalidrawElementBase> = {};
+  const exVals = [...el.attributes].reduce((exVals, attr) => {
+    const name = attr.name;
 
-  const has = hasAttr(el);
-  const get = getAttr(el);
-  const getNum = getAttrAsNumber(el);
-  const getOr = getAttrOr(el);
+    if (Object.keys(attrHandlers).includes(name)) {
+      attrHandlers[name as keyof PresAttrHandlers]({ el, exVals });
+    }
 
-  // stroke
-  if (has("stroke")) {
-    const strokeColor = get("stroke");
+    return exVals;
+  }, {} as ExPartialElement);
 
-    elVals.strokeColor = has("stroke-opacity")
-      ? hexWithAlpha(strokeColor, getNum("stroke-opacity"))
-      : strokeColor;
-  }
-
-  // stroke-opacity
-  if (has("stroke-opacity")) {
-    elVals.strokeColor = hexWithAlpha(
-      getOr("stroke", "#000000"),
-      getNum("stroke-opacity"),
-    );
-  }
-
-  // stroke-width
-  if (has("stroke-width")) {
-    elVals.strokeWidth = getNum("stroke-width");
-  }
-
-  // fill
-  if (has("fill")) {
-    elVals.backgroundColor = get("fill");
-  }
-
-  // fill opacity
-  if (has("fill-opacity")) {
-    elVals.backgroundColor = hexWithAlpha(
-      getOr("fill", "#000000"),
-      getNum("fill-opacity"),
-    );
-  }
-
-  // opacity
-  if (has("opacity")) {
-    elVals.opacity = getNum("opacity");
-  }
-
-  return elVals;
+  return exVals;
 }
 
 type FilterAttrs = Partial<
@@ -85,13 +99,21 @@ type FilterAttrs = Partial<
 export function filterAttrsToElementValues(el: Element): FilterAttrs {
   const filterVals: FilterAttrs = {};
 
-  const has = hasAttr(el);
-  const getNum = getAttrAsNumber(el);
+  if (has(el, "x")) {
+    filterVals.x = getNum(el, "x");
+  }
 
-  if (has("x")) filterVals.x = getNum("x");
-  if (has("y")) filterVals.y = getNum("y");
-  if (has("width")) filterVals.width = getNum("width");
-  if (has("height")) filterVals.height = getNum("height");
+  if (has(el, "y")) {
+    filterVals.y = getNum(el, "y");
+  }
+
+  if (has(el, "width")) {
+    filterVals.width = getNum(el, "width");
+  }
+
+  if (has(el, "height")) {
+    filterVals.height = getNum(el, "height");
+  }
 
   return filterVals;
 }
