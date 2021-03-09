@@ -46,5 +46,8 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "points-on-path": "0.2.1"
   }
 }
