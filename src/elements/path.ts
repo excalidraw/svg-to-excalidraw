@@ -1,6 +1,7 @@
-import { RawElement } from "../../types";
-import { getElementBoundaries } from "../utils";
-import pathToPoints from "./utils/path-to-points";
+import { pointsOnPath } from "points-on-path";
+
+import { RawElement } from "../types";
+import { getElementBoundaries } from "./utils";
 
 const parse = (node: Element) => {
   const data = node.getAttribute("d");
@@ -17,7 +18,7 @@ const parse = (node: Element) => {
 
 export const convert = (node: Element): RawElement[] => {
   const { data, backgroundColor, strokeColor } = parse(node);
-  const elementsPoints = pathToPoints(data);
+  const elementsPoints = pointsOnPath(data);
 
   console.log("Points:", elementsPoints);
 
