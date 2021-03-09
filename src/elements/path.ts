@@ -20,13 +20,13 @@ export const convert = (node: Element): RawElement[] => {
   const { data, backgroundColor, strokeColor } = parse(node);
   const elementsPoints = pointsOnPath(data);
 
-  console.log("Points:", elementsPoints);
-
   return elementsPoints.map((points) => {
     const boundaries = getElementBoundaries(points);
 
     return {
       type: "draw",
+      roughness: 0,
+      strokeSharpness: 'sharp',
       points,
       backgroundColor,
       strokeColor,

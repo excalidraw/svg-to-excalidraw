@@ -1,145 +1,40 @@
-import elementsConverter from "./elements";
-import { RawElement, ExcalidrawScene } from "./types";
-import { safeNumber } from "./utils";
+import ExcalidrawScene from "./elements/ExcalidrawScene";
+import Group from "./elements/Group";
+import { createTreeWalker, walk } from "./walker";
 
-const SUPPORTED_TAGS = ["svg", "path"];
+export type ConversionResult = {
+  hasErrors: boolean;
+  errors: NodeListOf<Element> | null;
+  content: any; // Serialized Excalidraw JSON
+};
 
-/**
- * Get a DOM representation of a SVG file content
- * @todo Handle parsing errors
- * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
- */
-const getDOMFromString = (svgString: string): XMLDocument => {
+export const convert = (svgString: string): ConversionResult => {
   const parser = new DOMParser();
   const svgDOM = parser.parseFromString(svgString, "image/svg+xml");
 
-  console.debug("Parsed DOM:", svgDOM);
+  // was there a parsing error?
+  const errorsElements = svgDOM.querySelectorAll("parsererror");
+  const hasErrors = errorsElements.length > 0;
+  let content = null;
 
-  return svgDOM;
-};
+  if (hasErrors) {
+    console.error(
+      "There were errors while parsing the given SVG: ",
+      [...errorsElements].map((el) => el.innerHTML),
+    );
+  } else {
+    const tw = createTreeWalker(svgDOM);
+    const scene = new ExcalidrawScene();
+    const groups: Group[] = [];
 
-/**
- * Validate a node given by TreeWalker iteration algorithm
- * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeFilter/acceptNode
- */
-const nodeValidator = (node: Element): number => {
-  if (SUPPORTED_TAGS.includes(node.tagName)) {
-    console.debug("Allowing node:", node.tagName);
+    walk({ tw, scene, groups, root: svgDOM }, tw.nextNode());
 
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
-  console.debug("Rejecting node:", node.tagName || node.nodeName);
-
-  return NodeFilter.FILTER_REJECT;
-};
-
-const getNodeListFromDOM = (dom: XMLDocument): Element[] => {
-  const treeWalker = document.createTreeWalker(dom, NodeFilter.SHOW_ALL, {
-    acceptNode: nodeValidator,
-  });
-  const nodeList: Element[] = [];
-  let currentNode = true;
-
-  while (currentNode) {
-    if (currentNode !== true) {
-      nodeList.push(currentNode);
-    }
-
-    // @ts-ignore // will update in a bit.
-    currentNode = treeWalker.nextNode();
-  }
-
-  return nodeList;
-};
-
-const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
-  const { x: minX, y: minY } = elements.reduce(
-    (minPoint, { x, y }) => {
-      if (x < minPoint.x) {
-        minPoint.x = x;
-      }
-      if (y < minPoint.y) {
-        minPoint.y = y;
-      }
-
-      return minPoint;
-    },
-    {
-      x: Infinity,
-      y: Infinity,
-    },
-  );
-
-  return elements.map((element) => {
-    const x = safeNumber(element.x - minX);
-    const y = safeNumber(element.y - minY);
-
-    return {
-      ...element,
-      points: element.points.map(([pX, pY]) => [
-        safeNumber(pX - x - minX),
-        safeNumber(pY - y - minY),
-      ]),
-      x,
-      y,
-    };
-  });
-};
-
-const handleElements = (nodeList: Element[]): ExcalidrawScene => {
-  const elements = [];
-
-  for (const node of nodeList) {
-    switch (node.nodeName) {
-      case "svg": {
-        const viewBox = node.getAttribute("viewBox");
-
-        console.log("Viewbox:", viewBox);
-
-        break;
-      }
-      case "path": {
-        const pathElements = elementsConverter.path.convert(node);
-
-        if (pathElements.length) {
-          elements.push(...pathElements);
-        }
-
-        break;
-      }
-    }
+    content = scene.toExJSON();
   }
 
   return {
-    type: "excalidraw",
-    version: 2,
-    source: "https://excalidraw.com",
-    elements: calculateElementsPositions(elements).map((element) => ({
-      angle: 0,
-      fillStyle: "hachure",
-      opacity: 100,
-      roughness: 1,
-      seed: Math.floor(
-        Math.random() * (100_000_000 - 1_000_000 + 1) + 1_000_000,
-      ),
-      strokeSharpness: "sharp",
-      strokeWidth: 1,
-      ...element,
-    })),
+    hasErrors,
+    errors: hasErrors ? errorsElements : null,
+    content,
   };
-};
-
-/**
- * Parse a SVG file content
- */
-export const parse = (input: string): ExcalidrawScene => {
-  const svgDOM = getDOMFromString(input);
-  const nodeList = getNodeListFromDOM(svgDOM);
-
-  console.debug("Fetched nodes:", nodeList);
-
-  const elements = handleElements(nodeList);
-
-  return elements;
 };
