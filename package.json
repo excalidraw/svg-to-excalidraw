@@ -2,6 +2,11 @@
   "name": "svg-to-excalidraw",
   "version": "0.0.0",
   "description": "Convert SVG to Excalidraw’s file format",
+  "main": "dist/bundle.js",
+  "files": [
+    "dist/bundle.js",
+    "svg-to-excalidraw.d.ts"
+  ],
   "scripts": {
     "build": "yarn clean && webpack --config webpack.config.js",
     "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
