@@ -415,6 +415,9 @@ const walkers = {
       };
     });
 
+    // NOTE: The path walker will be redone when implementing the path-to-points
+    //       external libraries.
+    // @ts-ignore
     scene.elements = scene.elements.concat(exPaths);
 
     walk(args, tw.nextNode());
