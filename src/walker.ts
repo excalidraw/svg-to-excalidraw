@@ -72,12 +72,8 @@ const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
 
 const nodeValidator = (node: Element): number => {
   if (SUPPORTED_TAGS.includes(node.tagName)) {
-    console.debug("Allowing node:", node.tagName);
-
     return NodeFilter.FILTER_ACCEPT;
   }
-
-  console.debug("Rejecting node:", node.tagName || node.nodeName);
 
   return NodeFilter.FILTER_REJECT;
 };
@@ -418,8 +414,6 @@ const walkers = {
         ...presAttrs(el, groups),
       };
     });
-
-    console.log("exPaths", exPaths);
 
     scene.elements = scene.elements.concat(exPaths);
 

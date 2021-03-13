@@ -56,8 +56,6 @@ const handleCubicCurveTo = (
   let inferredControlPoint;
 
   if (isSimpleForm) {
-    // console.log("Last command:", lastCommand);
-
     inferredControlPoint = ["C", "c"].includes(lastCommand?.type)
       ? [
           currentPosition[0] - (lastCommand.parameters[2] - currentPosition[0]),
@@ -83,8 +81,6 @@ const handleCubicCurveTo = (
     );
   }
 
-  // console.log("Control points:", controlPoints);
-
   return curveToPoints("cubic", controlPoints);
 };
 
@@ -99,8 +95,6 @@ const handleQuadraticCurveTo = (
   let inferredControlPoint;
 
   if (isSimpleForm) {
-    // console.log("Last command:", lastCommand);
-
     inferredControlPoint = ["Q", "q"].includes(lastCommand?.type)
       ? [
           currentPosition[0] - (lastCommand.parameters[0] - currentPosition[0]),
@@ -124,8 +118,6 @@ const handleQuadraticCurveTo = (
     ]);
   }
 
-  // console.log("Control points:", controlPoints);
-
   return curveToPoints("quadratic", controlPoints);
 };
 
@@ -141,8 +133,6 @@ const handleArcTo = (
   destX = isRelative ? currentPosition[0] + destX : destX;
   destY = isRelative ? currentPosition[1] + destY : destY;
 
-  console.debug("Destination is:", destX, destY);
-
   const ellipsesCenter = getEllipsesCenter(
     currentPosition[0],
     currentPosition[1],
@@ -151,8 +141,6 @@ const handleArcTo = (
     radiusX,
     radiusY,
   );
-
-  console.debug("Found ellipses center:", ellipsesCenter);
 
   const ellipsesPoints = [
     getEllipsePoints(
@@ -168,8 +156,6 @@ const handleArcTo = (
       radiusY,
     ),
   ];
-
-  console.debug("Ellipses points:", ellipsesPoints);
 
   const arcs = [
     findArc(
@@ -190,8 +176,6 @@ const handleArcTo = (
     ),
   ];
 
-  console.debug("Found possible arcs:", arcs);
-
   const finalArc = arcs.reduce(
     (arc, curArc) =>
       (large && curArc.length > arc.length) ||
@@ -200,8 +184,6 @@ const handleArcTo = (
         : arc,
     [],
   );
-
-  console.debug("Final arc:", finalArc);
 
   return finalArc;
 };
@@ -220,17 +202,11 @@ const pathToPoints = (path: string): number[][][] => {
     throw new Error("No commands found in given path");
   }
 
-  // console.log("Commands:", commands);
-
   for (const command of commands) {
-    // console.groupCollapsed(command);
-
     const lastCommand = commandsHistory[commandsHistory.length - 2];
     const commandMatch = command.match(COMMAND_REGEX);
 
     currentPosition = points[points.length - 1] || currentPosition;
-
-    // console.log("Current position:", currentPosition);
 
     if (commandMatch?.length) {
       const commandType = commandMatch[0];
@@ -244,9 +220,6 @@ const pathToPoints = (path: string): number[][][] => {
         parameters,
         isRelative,
       });
-
-      // console.log("Command type:", commandType);
-      // console.log("Parameters:", parameters);
 
       switch (commandType) {
         case "M":
@@ -325,10 +298,8 @@ const pathToPoints = (path: string): number[][][] => {
           break;
       }
     } else {
-      console.error("Unsupported command provided will be ignored:", command);
+      // console.error("Unsupported command provided will be ignored:", command);
     }
-
-    console.groupEnd();
   }
 
   if (elements.length === 0 && points.length) {

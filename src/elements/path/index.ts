@@ -25,7 +25,7 @@ export const convert = (node: Element): RawElement[] => {
     return {
       type: "draw",
       roughness: 0,
-      strokeSharpness: 'sharp',
+      strokeSharpness: "sharp",
       points,
       backgroundColor,
       strokeColor,

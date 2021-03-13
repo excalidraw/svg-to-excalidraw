@@ -1,5 +1,5 @@
 import { randomId } from "../utils";
-import { presAttrsToElementValues } from '../attributes';
+import { presAttrsToElementValues } from "../attributes";
 import { ExcalidrawElementBase } from "../elements/ExcalidrawElement";
 
 export function getGroupAttrs(groups: Group[]): any {

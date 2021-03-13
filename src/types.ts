@@ -53,10 +53,10 @@ export type Point = Readonly<RoughPoint>;
 
 export declare type Line = [Point, Point];
 export interface Rectangle {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export type ChartType = "bar" | "line";
@@ -179,4 +179,3 @@ export type ExcalidrawLinearElement = _ExcalidrawElementBase &
     startArrowhead: Arrowhead | null;
     endArrowhead: Arrowhead | null;
   }>;
-

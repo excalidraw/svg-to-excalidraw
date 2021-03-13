@@ -75,18 +75,25 @@ const defaultUnits = {
 const svgTransformToCSSTransform = (svgTransformStr: string): string => {
   // Create transform function string "chunks", e.g "rotate(90deg)"
   const tFuncs = svgTransformStr.match(/(\w+)\(([^)]*)\)/g);
-  if (!tFuncs) return "";
+  if (!tFuncs) {
+    return "";
+  }
 
   const tFuncValues: TransformFunc[] = tFuncs.map(
     (tFuncStr): TransformFunc => {
       const type = tFuncStr.split("(")[0] as keyof typeof transformFunctions;
-      if (!type) throw new Error("Unable to find transform name");
-      if (!transformFunctionsArr.includes(type))
+      if (!type) {
+        throw new Error("Unable to find transform name");
+      }
+      if (!transformFunctionsArr.includes(type)) {
         throw new Error(`transform function name "${type}" is not valid`);
+      }
 
       // get the arg/props of the transform function, e.g "90deg".
       const tFuncParts = tFuncStr.match(/([-+]?[0-9]*\.?[0-9]+)([a-z])*/g);
-      if (!tFuncParts) return { type, values: [] };
+      if (!tFuncParts) {
+        return { type, values: [] };
+      }
 
       let values = tFuncParts.map(
         (a): TransformFuncValue => {
@@ -107,7 +114,7 @@ const svgTransformToCSSTransform = (svgTransformStr: string): string => {
 
       return {
         type,
-        values: values,
+        values,
       };
     },
   );
