@@ -1,5 +1,5 @@
 import Group from "./elements/Group";
-import { mat4 } from "gl-matrix";
+import { vec3, mat4 } from "gl-matrix";
 
 /*
 SVG transform attr is a bit strange in that it can accept traditional
@@ -125,7 +125,6 @@ const svgTransformToCSSTransform = (svgTransformStr: string): string => {
   return csstransformStr;
 };
 
-
 export const createDOMMatrixFromSVGStr = (
   svgTransformStr: string,
 ): DOMMatrix => {
@@ -153,4 +152,19 @@ export function getTransformMatrix(el: Element, groups: Group[]): mat4 {
     .reduce((acc, mat) => mat4.multiply(acc, acc, mat), mat4.create());
 
   return accumMat;
+}
+
+export function transformPoints(
+  points: number[][],
+  transform: mat4,
+): [number, number][] {
+  return points.map(([x, y]) => {
+    const [newX, newY] = vec3.transformMat4(
+      vec3.create(),
+      vec3.fromValues(x, y, 1),
+      transform,
+    );
+
+    return [newX, newY];
+  });
 }

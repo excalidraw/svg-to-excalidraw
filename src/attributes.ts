@@ -59,7 +59,9 @@ const attrHandlers: PresAttrHandlers = {
   },
 
   fill: ({ el, exVals }) => {
-    exVals.backgroundColor = get(el, "fill");
+    const fill = get(el, `fill`);
+
+    exVals.backgroundColor = fill === "none" ? "#00000000" : fill;
   },
 
   "fill-opacity": ({ el, exVals }) => {
@@ -116,4 +118,16 @@ export function filterAttrsToElementValues(el: Element): FilterAttrs {
   }
 
   return filterVals;
+}
+
+export function pointsAttrToPoints(el: Element): number[][] {
+  let points: number[][] = [];
+
+  if (has(el, "points")) {
+    points = get(el, "points")
+      .split(" ")
+      .map((p) => p.split(",").map(parseFloat));
+  }
+
+  return points;
 }

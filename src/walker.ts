@@ -1,7 +1,7 @@
 import { vec3, mat4 } from "gl-matrix";
 import elementsConverter from "./elements";
 import { RawElement } from "./types";
-import { safeNumber } from "./utils";
+import { safeNumber, dimensionsFromPoints } from "./utils";
 import ExcalidrawScene from "./elements/ExcalidrawScene";
 import Group, { getGroupAttrs } from "./elements/Group";
 import {
@@ -16,9 +16,12 @@ import {
 import {
   presAttrsToElementValues,
   filterAttrsToElementValues,
+  pointsAttrToPoints,
+  has,
+  get,
   getNum,
 } from "./attributes";
-import { getTransformMatrix } from "./transform";
+import { getTransformMatrix, transformPoints } from "./transform";
 
 const SUPPORTED_TAGS = [
   "svg",
@@ -29,6 +32,7 @@ const SUPPORTED_TAGS = [
   "ellipse",
   "rect",
   "polyline",
+  "polygon",
 ];
 
 const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
@@ -211,19 +215,13 @@ const walkers = {
     const d = r * 2;
     const x = getNum(el, "x", 0) + getNum(el, "cx", 0) - r;
     const y = getNum(el, "y", 0) + getNum(el, "cy", 0) - r;
-    
+
     const mat = getTransformMatrix(el, groups);
 
     // @ts-ignore
-    const m = mat4.fromValues(
-      d, 0, 0, 0,
-      0, d, 0, 0,
-      0, 0, 1, 0,
-      x, y, 0, 1
-    );
+    const m = mat4.fromValues(d, 0, 0, 0, 0, d, 0, 0, 0, 0, 1, 0, x, y, 0, 1);
 
     const result = mat4.multiply(mat4.create(), mat, m);
-
 
     const circle: ExcalidrawEllipse = {
       ...createExEllipse(),
@@ -255,13 +253,7 @@ const walkers = {
 
     const mat = getTransformMatrix(el, groups);
 
-    // @ts-ignore
-    const m = mat4.fromValues(
-      w, 0, 0, 0,
-      0, h, 0, 0,
-      0, 0, 1, 0,
-      x, y, 0, 1
-    );
+    const m = mat4.fromValues(w, 0, 0, 0, 0, h, 0, 0, 0, 0, 1, 0, x, y, 0, 1);
 
     const result = mat4.multiply(mat4.create(), mat, m);
 
@@ -286,26 +278,82 @@ const walkers = {
   },
 
   polygon: (args: WalkerArgs) => {
-    // unimplemented
-    walk(args, args.tw.nextNode());
-  },
-
-  // TODO: Finish implementing this.
-  polyline: (args: WalkerArgs) => {
     const { tw, scene, groups } = args;
     const el = tw.currentNode as Element;
 
-    // parse points...
-    const groupAttrs = getGroupAttrs(groups);
+    const points = pointsAttrToPoints(el);
+
+    const mat = getTransformMatrix(el, groups);
+
+    const transformedPoints = transformPoints(points, mat);
+
+    // The first point needs to be 0, 0, and all following points
+    // are relative to the first point.
+    const x = transformedPoints[0][0];
+    const y = transformedPoints[0][1];
+
+    const relativePoints = transformedPoints.map(([_x, _y]) => [
+      _x - x,
+      _y - y,
+    ]);
+
+    const [width, height] = dimensionsFromPoints(relativePoints);
 
     const line: ExcalidrawLine = {
       ...createExLine(),
-      ...groupAttrs,
+      ...getGroupAttrs(groups),
+      ...presAttrsToElementValues(el),
+      points: relativePoints.concat([[0, 0]]),
+      x,
+      y,
+      width,
+      height,
     };
 
     scene.elements.push(line);
 
-    // unimplemented
+    walk(args, args.tw.nextNode());
+  },
+
+  polyline: (args: WalkerArgs) => {
+    const { tw, scene, groups } = args;
+    const el = tw.currentNode as Element;
+
+    const mat = getTransformMatrix(el, groups);
+
+    const points = pointsAttrToPoints(el);
+    const transformedPoints = transformPoints(points, mat);
+
+    // The first point needs to be 0, 0, and all following points
+    // are relative to the first point.
+    const x = transformedPoints[0][0];
+    const y = transformedPoints[0][1];
+
+    const relativePoints = transformedPoints.map(([_x, _y]) => [
+      _x - x,
+      _y - y,
+    ]);
+
+    const [width, height] = dimensionsFromPoints(relativePoints);
+
+    const hasFill = has(el, "fill");
+    const fill = get(el, "fill");
+
+    const shouldFill = !hasFill || (hasFill && fill !== "none");
+
+    const line: ExcalidrawLine = {
+      ...createExLine(),
+      ...getGroupAttrs(groups),
+      ...presAttrsToElementValues(el),
+      points: relativePoints.concat(shouldFill ? [[0, 0]] : []),
+      x,
+      y,
+      width,
+      height,
+    };
+
+    scene.elements.push(line);
+
     walk(args, args.tw.nextNode());
   },
 
@@ -321,12 +369,7 @@ const walkers = {
     const mat = getTransformMatrix(el, groups);
 
     // @ts-ignore
-    const m = mat4.fromValues(
-      w, 0, 0, 0,
-      0, h, 0, 0,
-      0, 0, 1, 0,
-      x, y, 0, 1
-    );
+    const m = mat4.fromValues(w, 0, 0, 0, 0, h, 0, 0, 0, 0, 1, 0, x, y, 0, 1);
 
     const result = mat4.multiply(mat4.create(), mat, m);
 
