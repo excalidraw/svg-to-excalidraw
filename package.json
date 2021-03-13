@@ -38,6 +38,7 @@
     "@excalidraw/prettier-config": "1.0.2",
     "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "4.17.0",
+    "babel-loader": "^8.2.2",
     "eslint": "7.21.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-prettier": "3.3.1",
@@ -52,5 +53,11 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "chroma-js": "^2.1.1",
+    "gl-matrix": "^3.3.0",
+    "nanoid": "^3.1.20",
+    "roughjs": "^4.3.1"
   }
 }
