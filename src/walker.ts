@@ -1,17 +1,18 @@
-import { vec3, mat4 } from "gl-matrix";
-import elementsConverter from "./elements";
-import { RawElement } from "./types";
-import { safeNumber, dimensionsFromPoints } from "./utils";
+import { mat4 } from "gl-matrix";
+import { dimensionsFromPoints } from "./utils";
 import ExcalidrawScene from "./elements/ExcalidrawScene";
 import Group, { getGroupAttrs } from "./elements/Group";
 import {
   ExcalidrawElementBase,
   ExcalidrawRectangle,
+  ExcalidrawEllipse,
+  ExcalidrawLine,
+  ExcalidrawDraw,
   createExRect,
   createExEllipse,
   createExLine,
-  ExcalidrawEllipse,
-  ExcalidrawLine,
+  createExDraw,
+  Point,
 } from "./elements/ExcalidrawElement";
 import {
   presAttrsToElementValues,
@@ -22,6 +23,7 @@ import {
   getNum,
 } from "./attributes";
 import { getTransformMatrix, transformPoints } from "./transform";
+import { pointsOnPath } from "points-on-path";
 
 const SUPPORTED_TAGS = [
   "svg",
@@ -34,41 +36,6 @@ const SUPPORTED_TAGS = [
   "polyline",
   "polygon",
 ];
-
-const calculateElementsPositions = (elements: RawElement[]): RawElement[] => {
-  const { x: minX, y: minY } = elements.reduce(
-    (minPoint, { x, y }) => {
-      if (x < minPoint.x) {
-        minPoint.x = x;
-      }
-
-      if (y < minPoint.y) {
-        minPoint.y = y;
-      }
-
-      return minPoint;
-    },
-    {
-      x: Infinity,
-      y: Infinity,
-    },
-  );
-
-  return elements.map((element) => {
-    const x = safeNumber(element.x - minX);
-    const y = safeNumber(element.y - minY);
-
-    return {
-      ...element,
-      points: element.points.map(([pX, pY]) => [
-        safeNumber(pX - x - minX),
-        safeNumber(pY - y - minY),
-      ]),
-      x,
-      y,
-    };
-  });
-};
 
 const nodeValidator = (node: Element): number => {
   if (SUPPORTED_TAGS.includes(node.tagName)) {
@@ -394,31 +361,37 @@ const walkers = {
   path: (args: WalkerArgs) => {
     const { tw, scene, groups } = args;
     const el = tw.currentNode as Element;
-    const pathElements = elementsConverter.path.convert(el);
 
     const mat = getTransformMatrix(el, groups);
 
-    const exPaths = calculateElementsPositions(pathElements).map((exp) => {
-      exp.points = exp.points.map(([x, y]) => {
-        const [newX, newY] = vec3.transformMat4(
-          vec3.create(),
-          vec3.fromValues(x, y, 1),
-          mat,
+    const points = pointsOnPath(get(el, "d"));
+
+    const elements = points.flatMap(
+      (pointArr): ExcalidrawDraw => {
+        const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
+        const x = tPoints[0][0];
+        const y = tPoints[0][1];
+
+        const [width, height] = dimensionsFromPoints(tPoints);
+
+        const relativePoints = tPoints.map(
+          ([_x, _y]): Point => [_x - x, _y - y],
         );
 
-        return [newX, newY];
-      });
+        return {
+          ...createExDraw(),
+          ...presAttrs(el, groups),
+          strokeWidth: 1,
+          points: relativePoints,
+          width,
+          height,
+          x,
+          y,
+        };
+      },
+    );
 
-      return {
-        ...exp,
-        ...presAttrs(el, groups),
-      };
-    });
-
-    // NOTE: The path walker will be redone when implementing the path-to-points
-    //       external libraries.
-    // @ts-ignore
-    scene.elements = scene.elements.concat(exPaths);
+    scene.elements = scene.elements.concat(elements);
 
     walk(args, tw.nextNode());
   },
