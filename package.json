@@ -2,6 +2,11 @@
   "name": "svg-to-excalidraw",
   "version": "0.0.0",
   "description": "Convert SVG to Excalidraw’s file format",
+  "main": "dist/bundle.js",
+  "files": [
+    "dist/bundle.js",
+    "svg-to-excalidraw.d.ts"
+  ],
   "scripts": {
     "build": "yarn clean && webpack --config webpack.config.js",
     "build:watch": "yarn clean && webpack --config webpack.config.js --watch",
@@ -31,8 +36,10 @@
     "@babel/preset-typescript": "7.13.0",
     "@excalidraw/eslint-config": "1.0.1",
     "@excalidraw/prettier-config": "1.0.2",
+    "@types/chroma-js": "^2.1.3",
     "@typescript-eslint/eslint-plugin": "4.17.0",
     "@typescript-eslint/parser": "4.17.0",
+    "babel-loader": "^8.2.2",
     "eslint": "7.21.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-prettier": "3.3.1",
@@ -47,5 +54,11 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "chroma-js": "^2.1.1",
+    "gl-matrix": "^3.3.0",
+    "nanoid": "^3.1.20",
+    "roughjs": "^4.3.1"
   }
 }
