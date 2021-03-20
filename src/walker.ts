@@ -24,6 +24,7 @@ import {
 } from "./attributes";
 import { getTransformMatrix, transformPoints } from "./transform";
 import { pointsOnPath } from "points-on-path";
+import { randomId, getWindingOrder } from "./utils";
 
 const SUPPORTED_TAGS = [
   "svg",
@@ -366,30 +367,86 @@ const walkers = {
 
     const points = pointsOnPath(get(el, "d"));
 
-    const elements = points.flatMap(
-      (pointArr): ExcalidrawDraw => {
-        const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
-        const x = tPoints[0][0];
-        const y = tPoints[0][1];
+    const fillColor = get(el, "fill", "black");
+    const fillRule = get(el, "fill-rule", "nonzero");
 
-        const [width, height] = dimensionsFromPoints(tPoints);
+    let elements: ExcalidrawDraw[] = [];
+    let localGroup = randomId();
 
-        const relativePoints = tPoints.map(
-          ([_x, _y]): Point => [_x - x, _y - y],
+    switch (fillRule) {
+      case "nonzero":
+        let initialWindingOrder = "clockwise";
+
+        elements = points.map(
+          (pointArr, idx): ExcalidrawDraw => {
+            const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
+            const x = tPoints[0][0];
+            const y = tPoints[0][1];
+
+            const [width, height] = dimensionsFromPoints(tPoints);
+
+            const relativePoints = tPoints.map(
+              ([_x, _y]): Point => [_x - x, _y - y],
+            );
+
+            const windingOrder = getWindingOrder(relativePoints);
+            if (idx === 0) {
+              initialWindingOrder = windingOrder;
+              localGroup = randomId();
+            }
+
+            let backgroundColor = fillColor;
+            if (initialWindingOrder !== windingOrder) {
+              backgroundColor = "#FFFFFF";
+            }
+
+            return {
+              ...createExDraw(),
+              strokeWidth: 0,
+              strokeColor: "#00000000",
+              ...presAttrs(el, groups),
+              points: relativePoints,
+              backgroundColor,
+              width,
+              height,
+              x: x + getNum(el, "x", 0),
+              y: y + getNum(el, "y", 0),
+              groupIds: [localGroup],
+            };
+          },
         );
+        break;
+      case "evenodd":
+        elements = points.map(
+          (pointArr, idx): ExcalidrawDraw => {
+            const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
+            const x = tPoints[0][0];
+            const y = tPoints[0][1];
 
-        return {
-          ...createExDraw(),
-          ...presAttrs(el, groups),
-          strokeWidth: 1,
-          points: relativePoints,
-          width,
-          height,
-          x,
-          y,
-        };
-      },
-    );
+            const [width, height] = dimensionsFromPoints(tPoints);
+
+            const relativePoints = tPoints.map(
+              ([_x, _y]): Point => [_x - x, _y - y],
+            );
+
+            if (idx === 0) {
+              localGroup = randomId();
+            }
+
+            return {
+              ...createExDraw(),
+              ...presAttrs(el, groups),
+              points: relativePoints,
+              width,
+              height,
+              x: x + getNum(el, "x", 0),
+              y: y + getNum(el, "y", 0),
+            };
+          },
+        );
+        break;
+      default:
+    }
 
     scene.elements = scene.elements.concat(elements);
 
