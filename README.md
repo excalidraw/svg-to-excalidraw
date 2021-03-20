@@ -10,7 +10,32 @@ yarn add svg-to-excalidraw
 
 ## :beginner: Usage
 
-TODO.
+```typescript
+import svgToEx from 'svg-to-excalidraw';
+
+const heartSVG = `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 10,30
+           A 20,20 0,0,1 50,30
+           A 20,20 0,0,1 90,30
+           Q 90,60 50,90
+           Q 10,60 10,30 z"/>
+</svg>
+`
+
+function convertAndCopyToClipboard(svgString) {
+  const { hasErrors, errors, content } = svgToEx.convert(svgString);
+  
+  // SVG parsing errors are propagated through.
+  if (hasErrors) {
+    console.error(errors);
+    return;
+  }
+  
+  navigator.clipboard.writeText(content)
+}
+
+```
 
 ## :game_die: Running tests
 
@@ -25,15 +50,6 @@ yarn build
 
 # Build and watch whenever a file is updated
 yarn build:watch
-```
-
-#### Running dev pages locally
-
-There are a number of pages that exist in the `dev` folder that help in local development. These files need to be served, but a local dev serve is provided via the [serve library](https://github.com/vercel/serve).
-
-```bash
-yarn dev:serve
-# open up a browser page to localhost:5000/dev
 ```
 
 ## :busts_in_silhouette: Contributing
