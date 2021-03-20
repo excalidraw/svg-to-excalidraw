@@ -11,7 +11,7 @@ yarn add svg-to-excalidraw
 ## :beginner: Usage
 
 ```typescript
-import svgToEx from 'svg-to-excalidraw';
+import svgToEx from "svg-to-excalidraw";
 
 const heartSVG = `
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -21,20 +21,19 @@ const heartSVG = `
            Q 90,60 50,90
            Q 10,60 10,30 z"/>
 </svg>
-`
+`;
 
 function convertAndCopyToClipboard(svgString) {
   const { hasErrors, errors, content } = svgToEx.convert(svgString);
-  
+
   // SVG parsing errors are propagated through.
   if (hasErrors) {
     console.error(errors);
     return;
   }
-  
-  navigator.clipboard.writeText(content)
-}
 
+  navigator.clipboard.writeText(content);
+}
 ```
 
 ## :game_die: Running tests
