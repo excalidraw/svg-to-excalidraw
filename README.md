@@ -23,17 +23,18 @@ const heartSVG = `
 </svg>
 `;
 
-function convertAndCopyToClipboard(svgString) {
-  const { hasErrors, errors, content } = svgToEx.convert(svgString);
+const { hasErrors, errors, content } = svgToEx.convert(heartSVG);
 
-  // SVG parsing errors are propagated through.
-  if (hasErrors) {
-    console.error(errors);
-    return;
-  }
-
-  navigator.clipboard.writeText(content);
+// SVG parsing errors are propagated through.
+if (hasErrors) {
+  console.error(errors);
+  return;
 }
+
+navigator.clipboard.writeText(content);
+
+// the heart excalidraw json is not copied to your clipboard.
+// Just Paste it into your Excalidraw session!
 ```
 
 ## :game_die: Running tests
