@@ -8,6 +8,8 @@ import {
   ExcalidrawLinearElement,
 } from "../types";
 
+export type Point = [number, number];
+
 export type ExcalidrawElementBase = {
   id: string;
   x: number;
@@ -47,6 +49,7 @@ export type ExcalidrawRectangle = ExcalidrawElementBase & {
 
 export type ExcalidrawLine = ExcalidrawElementBase & {
   type: "line";
+  points: readonly Point[];
 };
 
 export type ExcalidrawEllipse = ExcalidrawElementBase & {
@@ -56,7 +59,13 @@ export type ExcalidrawEllipse = ExcalidrawElementBase & {
 export type ExcalidrawGenericElement =
   | ExcalidrawRectangle
   | ExcalidrawEllipse
-  | ExcalidrawLine;
+  | ExcalidrawLine
+  | ExcalidrawDraw;
+
+export type ExcalidrawDraw = ExcalidrawElementBase & {
+  type: "draw";
+  points: readonly Point[];
+};
 
 export function createExElement(): ExcalidrawElementBase {
   return {
@@ -94,6 +103,7 @@ export function createExLine(): ExcalidrawLine {
   return {
     ...createExElement(),
     type: "line",
+    points: [],
   };
 }
 
@@ -101,5 +111,13 @@ export function createExEllipse(): ExcalidrawEllipse {
   return {
     ...createExElement(),
     type: "ellipse",
+  };
+}
+
+export function createExDraw(): ExcalidrawDraw {
+  return {
+    ...createExElement(),
+    type: "draw",
+    points: [],
   };
 }
