@@ -33,7 +33,7 @@ if (hasErrors) {
 
 navigator.clipboard.writeText(content);
 
-// the heart excalidraw json is not copied to your clipboard.
+// the heart excalidraw json is now copied to your clipboard.
 // Just Paste it into your Excalidraw session!
 ```
 
