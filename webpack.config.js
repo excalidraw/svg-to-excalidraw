@@ -10,7 +10,7 @@ const babelLoaderConfig = {
       "@babel/plugin-proposal-class-properties",
       "@babel/plugin-proposal-object-rest-spread",
     ],
-    presets: ["@babel/typescript"],
+    presets: ["@babel/preset-env", "@babel/typescript"],
   },
 };
 

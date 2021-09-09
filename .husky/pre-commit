@@ -1,8 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# NOTE: If you are using a program to manage git, such as Sourcetree, but you are receiving an "npx is not a valid command." error, 
-#       it probably means that your PATH is not being picked up when the commit flags are running. See this link for help:
-#       https://community.atlassian.com/t5/Bitbucket-questions/SourceTree-Hook-failing-because-paths-don-t-seem-to-be-set/qaq-p/274792
-
-npx --no-install lint-staged
