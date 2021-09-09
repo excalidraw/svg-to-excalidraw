@@ -73,7 +73,7 @@ export const getEllipsePoints = (
   radiusX: number,
   radiusY: number,
 ): number[][] => {
-  const points = [];
+  const points: number[][] = [];
 
   for (let i = 0; i < 360; i += 1) {
     const pointAtDegree = getPointAtDegree(
