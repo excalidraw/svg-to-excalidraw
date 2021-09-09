@@ -377,73 +377,69 @@ const walkers = {
       case "nonzero":
         let initialWindingOrder = "clockwise";
 
-        elements = points.map(
-          (pointArr, idx): ExcalidrawDraw => {
-            const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
-            const x = tPoints[0][0];
-            const y = tPoints[0][1];
+        elements = points.map((pointArr, idx): ExcalidrawDraw => {
+          const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
+          const x = tPoints[0][0];
+          const y = tPoints[0][1];
 
-            const [width, height] = dimensionsFromPoints(tPoints);
+          const [width, height] = dimensionsFromPoints(tPoints);
 
-            const relativePoints = tPoints.map(
-              ([_x, _y]): Point => [_x - x, _y - y],
-            );
+          const relativePoints = tPoints.map(
+            ([_x, _y]): Point => [_x - x, _y - y],
+          );
 
-            const windingOrder = getWindingOrder(relativePoints);
-            if (idx === 0) {
-              initialWindingOrder = windingOrder;
-              localGroup = randomId();
-            }
+          const windingOrder = getWindingOrder(relativePoints);
+          if (idx === 0) {
+            initialWindingOrder = windingOrder;
+            localGroup = randomId();
+          }
 
-            let backgroundColor = fillColor;
-            if (initialWindingOrder !== windingOrder) {
-              backgroundColor = "#FFFFFF";
-            }
+          let backgroundColor = fillColor;
+          if (initialWindingOrder !== windingOrder) {
+            backgroundColor = "#FFFFFF";
+          }
 
-            return {
-              ...createExDraw(),
-              strokeWidth: 0,
-              strokeColor: "#00000000",
-              ...presAttrs(el, groups),
-              points: relativePoints,
-              backgroundColor,
-              width,
-              height,
-              x: x + getNum(el, "x", 0),
-              y: y + getNum(el, "y", 0),
-              groupIds: [localGroup],
-            };
-          },
-        );
+          return {
+            ...createExDraw(),
+            strokeWidth: 0,
+            strokeColor: "#00000000",
+            ...presAttrs(el, groups),
+            points: relativePoints,
+            backgroundColor,
+            width,
+            height,
+            x: x + getNum(el, "x", 0),
+            y: y + getNum(el, "y", 0),
+            groupIds: [localGroup],
+          };
+        });
         break;
       case "evenodd":
-        elements = points.map(
-          (pointArr, idx): ExcalidrawDraw => {
-            const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
-            const x = tPoints[0][0];
-            const y = tPoints[0][1];
+        elements = points.map((pointArr, idx): ExcalidrawDraw => {
+          const tPoints: Point[] = transformPoints(pointArr, mat4.clone(mat));
+          const x = tPoints[0][0];
+          const y = tPoints[0][1];
 
-            const [width, height] = dimensionsFromPoints(tPoints);
+          const [width, height] = dimensionsFromPoints(tPoints);
 
-            const relativePoints = tPoints.map(
-              ([_x, _y]): Point => [_x - x, _y - y],
-            );
+          const relativePoints = tPoints.map(
+            ([_x, _y]): Point => [_x - x, _y - y],
+          );
 
-            if (idx === 0) {
-              localGroup = randomId();
-            }
+          if (idx === 0) {
+            localGroup = randomId();
+          }
 
-            return {
-              ...createExDraw(),
-              ...presAttrs(el, groups),
-              points: relativePoints,
-              width,
-              height,
-              x: x + getNum(el, "x", 0),
-              y: y + getNum(el, "y", 0),
-            };
-          },
-        );
+          return {
+            ...createExDraw(),
+            ...presAttrs(el, groups),
+            points: relativePoints,
+            width,
+            height,
+            x: x + getNum(el, "x", 0),
+            y: y + getNum(el, "y", 0),
+          };
+        });
         break;
       default:
     }

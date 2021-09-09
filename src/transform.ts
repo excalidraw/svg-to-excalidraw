@@ -79,45 +79,41 @@ const svgTransformToCSSTransform = (svgTransformStr: string): string => {
     return "";
   }
 
-  const tFuncValues: TransformFunc[] = tFuncs.map(
-    (tFuncStr): TransformFunc => {
-      const type = tFuncStr.split("(")[0] as keyof typeof transformFunctions;
-      if (!type) {
-        throw new Error("Unable to find transform name");
-      }
-      if (!transformFunctionsArr.includes(type)) {
-        throw new Error(`transform function name "${type}" is not valid`);
-      }
+  const tFuncValues: TransformFunc[] = tFuncs.map((tFuncStr): TransformFunc => {
+    const type = tFuncStr.split("(")[0] as keyof typeof transformFunctions;
+    if (!type) {
+      throw new Error("Unable to find transform name");
+    }
+    if (!transformFunctionsArr.includes(type)) {
+      throw new Error(`transform function name "${type}" is not valid`);
+    }
 
-      // get the arg/props of the transform function, e.g "90deg".
-      const tFuncParts = tFuncStr.match(/([-+]?[0-9]*\.?[0-9]+)([a-z])*/g);
-      if (!tFuncParts) {
-        return { type, values: [] };
-      }
+    // get the arg/props of the transform function, e.g "90deg".
+    const tFuncParts = tFuncStr.match(/([-+]?[0-9]*\.?[0-9]+)([a-z])*/g);
+    if (!tFuncParts) {
+      return { type, values: [] };
+    }
 
-      let values = tFuncParts.map(
-        (a): TransformFuncValue => {
-          // Separate the arg value and unit. e.g ["90", "deg"]
-          const [value, unit] = a.matchAll(/([-+]?[0-9]*\.?[0-9]+)|([a-z])*/g);
-
-          return {
-            unit: unit[0] || defaultUnits[type],
-            value: value[0],
-          };
-        },
-      );
-
-      // Not supporting x, y args of svg rotate transform yet...
-      if (values && type === "rotate" && values?.length > 1) {
-        values = [values[0]];
-      }
+    let values = tFuncParts.map((a): TransformFuncValue => {
+      // Separate the arg value and unit. e.g ["90", "deg"]
+      const [value, unit] = a.matchAll(/([-+]?[0-9]*\.?[0-9]+)|([a-z])*/g);
 
       return {
-        type,
-        values,
+        unit: unit[0] || defaultUnits[type],
+        value: value[0],
       };
-    },
-  );
+    });
+
+    // Not supporting x, y args of svg rotate transform yet...
+    if (values && type === "rotate" && values?.length > 1) {
+      values = [values[0]];
+    }
+
+    return {
+      type,
+      values,
+    };
+  });
 
   // Generate a string of transform functions that can be set as a CSS Transform.
   const csstransformStr = tFuncValues

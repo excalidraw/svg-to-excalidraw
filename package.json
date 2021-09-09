@@ -24,7 +24,10 @@
     "test:typecheck": "tsc"
   },
   "prettier": "@excalidraw/prettier-config",
-  "contributors": ["Nicolas Goudry <goudry.nicolas@gmail.com>", "Broch Stilley <brochington@gmail.com>"],
+  "contributors": [
+    "Nicolas Goudry <goudry.nicolas@gmail.com>",
+    "Broch Stilley <brochington@gmail.com>"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "7.15.5",
